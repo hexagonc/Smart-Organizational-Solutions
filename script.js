@@ -1,0 +1,262 @@
+const { useState, useEffect } = React;
+
+// ===== Navbar =====
+function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <nav className={`navbar navbar-expand-lg navbar-dark fixed-top ${scrolled ? 'scrolled' : ''} navbar-custom`}>
+      <div className="container">
+        <a className="navbar-brand d-flex align-items-center" href="#home">
+          <img src="images/sos_large_logo_3.png" alt="Smart Organizational Solutions logo" className="navbar-logo me-2" />
+          <span>SOS</span>
+        </a>
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul className="navbar-nav">
+            <li className="nav-item"><a className="nav-link" href="#home">Home</a></li>
+            <li className="nav-item"><a className="nav-link" href="#features">Services</a></li>
+            <li className="nav-item"><a className="nav-link" href="#about">About</a></li>
+            <li className="nav-item"><a className="nav-link" href="#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+// ===== Hero =====
+function Hero() {
+  return (
+    <section className="hero text-white" id="home">
+      <div className="container position-relative">
+        <div className="row align-items-center">
+          <div className="col-lg-7">
+            <h1 className="display-4 mb-4">Smart Organizational Solutions</h1>
+            <p className="lead mb-4">
+              A two-person high-tech consultancy: we combine cutting-edge mobile & AI expertise with organizational effectiveness and change management to help your business perform at its best.
+            </p>
+            <div className="d-flex flex-wrap gap-3">
+              <a href="#contact" className="btn btn-primary">Contact us</a>
+              <a href="#about" className="btn btn-outline-light">Meet the team</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ===== Features (Services) =====
+function Features() {
+  const items = [
+    { icon: 'bi-phone', title: 'Android & mobile', text: 'Expert Android development and applying AI technology to mobile platforms—from strategy to deployment.', color: 'primary' },
+    { icon: 'bi-diagram-3', title: 'Organizational effectiveness', text: 'Optimize how your teams and processes work so your organization can deliver results consistently.', color: 'accent' },
+    { icon: 'bi-arrow-repeat', title: 'Change management', text: 'Navigate transitions with clarity: we help you plan, communicate, and sustain change that sticks.', color: 'success' },
+  ];
+
+  return (
+    <section className="features" id="features">
+      <div className="container">
+        <h2 className="section-title text-center">What we do</h2>
+        <p className="section-subtitle text-center">
+          Technology and people expertise in one small, focused consultancy.
+        </p>
+        <div className="row g-4">
+          {items.map((item, i) => (
+            <div key={i} className="col-md-6 col-lg-4">
+              <div className="feature-card card">
+                <div className={`feature-icon ${item.color}`}>
+                  <i className={`bi ${item.icon}`}></i>
+                </div>
+                <h5 className="fw-bold">{item.title}</h5>
+                <p className="text-secondary mb-0">{item.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ===== About / Team =====
+function About() {
+  return (
+    <section className="about" id="about">
+      <div className="container">
+        <h2 className="section-title text-center">Our team</h2>
+        <p className="section-subtitle text-center">
+          A small consultancy with deep expertise in technology and organizations.
+        </p>
+
+        <div className="team-vertical">
+          <div className="team-section team-section-aprill card border-0 overflow-hidden">
+            <div className="team-section-inner">
+              <div className="team-photo-wrapper">
+                <img src="images/aprill_prof_full.jpg" alt="Aprill Baughns" className="team-photo" />
+              </div>
+              <div className="team-section-content">
+                <p className="text-primary small fw-semibold mb-2">Organizational effectiveness &amp; change</p>
+                <h3 className="h4 fw-bold mb-2">Aprill Baughns</h3>
+                <p className="mb-0 small">
+                  Expert in organizational effectiveness and change management. Helps teams and leaders
+                  navigate complexity and deliver sustainable results.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="team-section team-section-andrew card border-0 overflow-hidden">
+            <div className="team-section-inner">
+              <div className="team-photo-wrapper">
+                <img src="images/ugly_andrew.jpg" alt="Andrew Baughns" className="team-photo" />
+              </div>
+              <div className="team-section-content">
+                <p className="text-primary small fw-semibold mb-2">Android &amp; AI on mobile</p>
+                <h3 className="h4 fw-bold mb-2">Andrew Baughns</h3>
+                <p className="mb-0 small">
+                  Specializes in Android development and applying AI technology to mobile platforms.
+                  Brings technical depth and product thinking to every engagement.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ===== Contact =====
+function Contact() {
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  return (
+    <section className="contact" id="contact">
+      <div className="container">
+        <h2 className="section-title text-center">Get in touch</h2>
+        <p className="section-subtitle text-center">
+          Have a project in mind? Tell us about it and we'll get back to you within 24 hours.
+        </p>
+        <div className="row justify-content-center">
+          <div className="col-lg-8">
+            {submitted ? (
+              <div className="alert alert-success text-center">
+                <i className="bi bi-check-circle-fill me-2"></i>
+                Thanks! We've received your message and will be in touch soon.
+              </div>
+            ) : (
+              <form className="contact-form" onSubmit={handleSubmit}>
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <input type="text" className="form-control" placeholder="Your name" required />
+                  </div>
+                  <div className="col-md-6">
+                    <input type="email" className="form-control" placeholder="Email address" required />
+                  </div>
+                  <div className="col-12">
+                    <select className="form-select">
+                      <option value="">What are you interested in?</option>
+                      <option value="android-ai">Android & AI on mobile</option>
+                      <option value="org-effectiveness">Organizational effectiveness</option>
+                      <option value="change-mgmt">Change management</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div className="col-12">
+                    <textarea className="form-control" rows="4" placeholder="Your message" required></textarea>
+                  </div>
+                  <div className="col-12">
+                    <button type="submit" className="btn btn-primary">Send message</button>
+                  </div>
+                </div>
+              </form>
+            )}
+            <div className="mt-5 pt-4">
+              <div className="contact-info-item">
+                <i className="bi bi-envelope-fill"></i>
+                <div>
+                  <strong>Email</strong><br />
+                  Use the form above to reach us. We'll respond as soon as we can.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ===== Footer =====
+function Footer() {
+  return (
+    <footer className="footer">
+      <div className="container">
+        <div className="row">
+          <div className="col-md-6 mb-4 mb-md-0">
+            <span className="navbar-brand text-white">Smart Organizational Solutions, LLC</span>
+            <p className="mt-2 mb-3">High-tech consultancy: mobile, AI, and organizational excellence.</p>
+            <div className="social-links">
+              <a href="#"><i className="bi bi-linkedin"></i></a>
+              <a href="#"><i className="bi bi-twitter-x"></i></a>
+              <a href="#"><i className="bi bi-github"></i></a>
+            </div>
+          </div>
+          <div className="col-md-3 col-6">
+            <h6 className="text-white mb-3">Quick links</h6>
+            <ul className="list-unstyled">
+              <li><a href="#home">Home</a></li>
+              <li><a href="#features">Services</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div className="col-md-3 col-6">
+            <h6 className="text-white mb-3">Legal</h6>
+            <ul className="list-unstyled">
+              <li><a href="#">Privacy</a></li>
+              <li><a href="#">Terms</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="footer-bottom text-center text-md-start">
+          &copy; {new Date().getFullYear()} Smart Organizational Solutions, LLC. All rights reserved.
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ===== App =====
+function App() {
+  return (
+    <>
+      <Navbar />
+      <main>
+        <Hero />
+        <Features />
+        <About />
+        <Contact />
+        <Footer />
+      </main>
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
