@@ -308,7 +308,11 @@ section {
 }
 
 .team-section-andrew {
-  background-color: #f5f9ff;
+  background-color: #f0f6fc;
+}
+
+.team-section-andrew .team-quote {
+  border-left-color: var(--primary);
 }
 
 @media (max-width: 768px) {

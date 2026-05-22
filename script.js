@@ -144,11 +144,35 @@ function About() {
                 <img src="images/ugly_andrew.jpg" alt="Andrew Baughns" className="team-photo" />
               </div>
               <div className="team-section-content">
-                <p className="text-primary small fw-semibold mb-2">Android &amp; AI on mobile</p>
-                <h3 className="h4 fw-bold mb-2">Andrew Baughns</h3>
-                <p className="mb-0 small">
-                  Specializes in Android development and applying AI technology to mobile platforms.
-                  Brings technical depth and product thinking to every engagement.
+                <p className="team-eyebrow text-primary small fw-semibold mb-2">
+                  Mobile development &amp; on-device AI
+                </p>
+                <h3 className="h4 fw-bold mb-1">Andrew Baughns</h3>
+                <p className="team-title text-secondary small mb-3">
+                  Mobile Developer · AI Specialist · On-Device AI &amp; Intelligent Applications
+                </p>
+                <p className="small mb-3">
+                  Andrew brings nearly two decades of end-to-end Android experience, from architecture and
+                  Play Store delivery to integrating generative AI and large language models on mobile devices.
+                  He has led development for telematics platforms, voice assistants, and privacy-focused LLM
+                  infrastructure—combining clean architecture, CI/CD, and a top-down, iterative approach to
+                  ship intelligently designed apps that are easy to understand and evolve.
+                </p>
+                <ul className="team-focus-list small mb-3">
+                  <li>Android applications, clean architecture &amp; CI/CD at production scale</li>
+                  <li>Generative AI, LLMs &amp; intelligent agents on mobile and in the cloud</li>
+                  <li>Mobile sensing, geolocation, UX design (Figma) &amp; privacy-conscious platforms</li>
+                </ul>
+                <div className="team-credentials d-flex flex-wrap gap-2 mb-3">
+                  <span className="badge rounded-pill text-bg-light border">Android</span>
+                  <span className="badge rounded-pill text-bg-light border">Gen AI</span>
+                  <span className="badge rounded-pill text-bg-light border">LLMs</span>
+                  <span className="badge rounded-pill text-bg-light border">CI/CD</span>
+                  <span className="badge rounded-pill text-bg-light border">MIT</span>
+                  <span className="badge rounded-pill text-bg-light border">Georgia Tech MS CS</span>
+                </div>
+                <p className="team-quote small fst-italic text-secondary mb-0">
+                  &ldquo;The goal is not to write perfect code, but code that is easy to understand, change, and aligned with a consistent design approach.&rdquo;
                 </p>
               </div>
             </div>
