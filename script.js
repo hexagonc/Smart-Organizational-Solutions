@@ -1,5 +1,35 @@
 const { useState, useEffect } = React;
 
+// ===== Articles data =====
+const ARTICLES = [
+  {
+    id: 'ai-is-real',
+    title: 'AI algorithms are grounded in our natural intuitions',
+    author: 'Andrew Baughns',
+    excerpt: 'A clear-eyed look at what artificial intelligence is, how it connects to everyday intuition and middle-school math, and why public understanding matters for policy and ethics.',
+    markdownPath: 'articles/andrew/1_AI_is_real/draft5.md',
+    imageBase: 'articles/andrew/1_AI_is_real/',
+    backgroundImage: 'images/article_tile.png',
+  },
+];
+
+function articleAssetUrl(imageBase, file) {
+  const base = imageBase.endsWith('/') ? imageBase.slice(0, -1) : imageBase;
+  // Encode path so Markdown parsers and browsers handle spaces in folder names
+  return `/${encodeURI(`${base}/${file}`)}`;
+}
+
+function preprocessMarkdown(md, imageBase) {
+  return md
+    .replace(/^#\s+.+\n+/, '')
+    .replace(/!\[\[([^\]]+)\]\]/g, (_, file) => `![${file}](${articleAssetUrl(imageBase, file)})`);
+}
+
+function getArticleIdFromHash() {
+  const match = window.location.hash.match(/^#article\/([^/]+)/);
+  return match ? match[1] : null;
+}
+
 // ===== Navbar =====
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -24,6 +54,7 @@ function Navbar() {
           <ul className="navbar-nav">
             <li className="nav-item"><a className="nav-link" href="#home">Home</a></li>
             <li className="nav-item"><a className="nav-link" href="#features">Services</a></li>
+            <li className="nav-item"><a className="nav-link" href="#articles">Articles</a></li>
             <li className="nav-item"><a className="nav-link" href="#about">About</a></li>
             <li className="nav-item"><a className="nav-link" href="#contact">Contact</a></li>
           </ul>
@@ -82,6 +113,110 @@ function Features() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ===== Articles listing =====
+function Articles() {
+  return (
+    <section className="articles" id="articles">
+      <div className="container">
+        <h2 className="section-title text-center">Articles</h2>
+        <p className="section-subtitle text-center">
+          Perspectives on AI, technology, and organizational change from our team.
+        </p>
+        <div className="row g-4 justify-content-center">
+          {ARTICLES.map((article) => (
+            <div key={article.id} className="col-md-10 col-lg-8">
+              <div className="article-card card border-0 shadow-sm h-100">
+                <div className="card-body p-4">
+                  <p className="text-primary small fw-semibold mb-2">{article.author}</p>
+                  <h3 className="h5 fw-bold mb-2">{article.title}</h3>
+                  <p className="text-secondary mb-3">{article.excerpt}</p>
+                  <a href={`#article/${article.id}`} className="btn btn-outline-primary btn-sm">
+                    Read article <i className="bi bi-arrow-right ms-1"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ===== Article reader =====
+function ArticlePage({ articleId }) {
+  const article = ARTICLES.find((a) => a.id === articleId);
+  const [html, setHtml] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (!article) {
+      setError('Article not found.');
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    fetch(encodeURI(article.markdownPath))
+      .then((res) => {
+        if (!res.ok) throw new Error('Could not load article.');
+        return res.text();
+      })
+      .then((md) => {
+        const processed = preprocessMarkdown(md, article.imageBase);
+        setHtml(marked.parse(processed));
+        document.title = `${article.title} | Smart Organizational Solutions`;
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Could not load article. Please try again later.');
+        setLoading(false);
+      });
+  }, [articleId]);
+
+  if (!article) {
+    return (
+      <section className="article-page">
+        <div className="container">
+          <p className="text-danger">Article not found.</p>
+          <a href="#articles" className="btn btn-outline-primary">Back to articles</a>
+        </div>
+      </section>
+    );
+  }
+
+  const pageClass = article.backgroundImage
+    ? 'article-page article-page-with-background'
+    : 'article-page';
+
+  return (
+    <section
+      className={pageClass}
+      style={article.backgroundImage ? { '--article-bg': `url('${article.backgroundImage}')` } : undefined}
+    >
+      <div className="container">
+        <div className="article-panel">
+          <a href="#articles" className="article-back-link small text-decoration-none mb-4 d-inline-block">
+            <i className="bi bi-arrow-left me-1"></i> Back to articles
+          </a>
+          <header className="article-header mb-4">
+            <p className="text-primary small fw-semibold mb-2">{article.author}</p>
+            <h1 className="article-title h2 fw-bold">{article.title}</h1>
+          </header>
+          {loading && <p className="text-secondary">Loading article…</p>}
+          {error && <p className="text-danger">{error}</p>}
+          {!loading && !error && (
+            <article className="article-body" dangerouslySetInnerHTML={{ __html: html }} />
+          )}
         </div>
       </div>
     </section>
@@ -269,6 +404,7 @@ function Footer() {
             <ul className="list-unstyled">
               <li><a href="#home">Home</a></li>
               <li><a href="#features">Services</a></li>
+              <li><a href="#articles">Articles</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
             </ul>
@@ -291,12 +427,33 @@ function Footer() {
 
 // ===== App =====
 function App() {
+  const [articleId, setArticleId] = useState(getArticleIdFromHash());
+
+  useEffect(() => {
+    const onHashChange = () => setArticleId(getArticleIdFromHash());
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  if (articleId) {
+    return (
+      <>
+        <Navbar />
+        <main>
+          <ArticlePage articleId={articleId} />
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <Navbar />
       <main>
         <Hero />
         <Features />
+        <Articles />
         <About />
         <Contact />
         <Footer />
