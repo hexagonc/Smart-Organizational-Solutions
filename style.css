@@ -268,8 +268,43 @@ section {
   flex: 1 1 auto;
 }
 
+.team-eyebrow {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.team-title {
+  line-height: 1.5;
+}
+
+.team-focus-list {
+  padding-left: 1.25rem;
+  margin-bottom: 0;
+}
+
+.team-focus-list li {
+  margin-bottom: 0.35rem;
+}
+
+.team-focus-list li:last-child {
+  margin-bottom: 0;
+}
+
+.team-credentials .badge {
+  font-weight: 500;
+  font-size: 0.75rem;
+  padding: 0.4em 0.75em;
+  color: var(--dark);
+}
+
+.team-quote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1rem;
+  line-height: 1.6;
+}
+
 .team-section-aprill {
-  background-color: #f8f9ff;
+  background-color: #f6f4fa;
 }
 
 .team-section-andrew {

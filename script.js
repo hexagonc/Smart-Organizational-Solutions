@@ -105,11 +105,34 @@ function About() {
                 <img src="images/aprill_prof_full.jpg" alt="Aprill Baughns" className="team-photo" />
               </div>
               <div className="team-section-content">
-                <p className="text-primary small fw-semibold mb-2">Organizational effectiveness &amp; change</p>
-                <h3 className="h4 fw-bold mb-2">Aprill Baughns</h3>
-                <p className="mb-0 small">
-                  Expert in organizational effectiveness and change management. Helps teams and leaders
-                  navigate complexity and deliver sustainable results.
+                <p className="team-eyebrow text-primary small fw-semibold mb-2">
+                  Transformation &amp; organizational effectiveness
+                </p>
+                <h3 className="h4 fw-bold mb-1">Aprill Baughns</h3>
+                <p className="team-title text-secondary small mb-3">
+                  Senior Director Analyst, Gartner · Transformation Architect · Business Behavioral Scientist
+                </p>
+                <p className="small mb-3">
+                  Aprill helps organizations design marketing and communications structures that scale—analyzing
+                  how teams develop, transform, and perform so leaders get actionable, evidence-based guidance.
+                  She has led complex enterprise change from strategy through delivery, including programs valued
+                  in the billions and affecting tens of thousands of employees.
+                </p>
+                <ul className="team-focus-list small mb-3">
+                  <li>Organizational transformation &amp; operational readiness</li>
+                  <li>Agile leadership, change management &amp; M&amp;A integration</li>
+                  <li>Marketing &amp; communications effectiveness at enterprise scale</li>
+                </ul>
+                <div className="team-credentials d-flex flex-wrap gap-2 mb-3">
+                  <span className="badge rounded-pill text-bg-light border">CCMP™</span>
+                  <span className="badge rounded-pill text-bg-light border">CSM®</span>
+                  <span className="badge rounded-pill text-bg-light border">CAL</span>
+                  <span className="badge rounded-pill text-bg-light border">PMP</span>
+                  <span className="badge rounded-pill text-bg-light border">Prosci</span>
+                  <span className="badge rounded-pill text-bg-light border">SAFe</span>
+                </div>
+                <p className="team-quote small fst-italic text-secondary mb-0">
+                  &ldquo;While others focus on not breaking the business, my job is to ensure employees aren&rsquo;t broken—while still not breaking the business.&rdquo;
                 </p>
               </div>
             </div>
