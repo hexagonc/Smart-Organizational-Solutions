@@ -20,6 +20,7 @@ Then visit **http://localhost:8080**
 | `index.html` | Entry page, loads Bootstrap, React, Marked, `script.js` |
 | `script.js` | Site UI and article routing (`#article/<id>`) |
 | `style.css` | Styles including article reader and backgrounds |
+| `config.json` | Site settings (contact email, form options) |
 | `images/` | Site assets (logo, hero, article tile) |
 | `articles/` | Markdown sources and per-article images |
 | `scripts/` | Utilities to generate article background tiles |
@@ -65,12 +66,24 @@ Add an entry to the `ARTICLES` array at the top of `script.js`:
   id: 'my-article-slug',           // URL: #article/my-article-slug
   title: 'My Article Title',       // Shown in listing and article header
   author: 'Andrew Baughns',
+  publishedAt: '2025-05-21',       // ISO date (YYYY-MM-DD), shown on listing and article page
   excerpt: 'Short summary for the Articles section.',
   markdownPath: 'articles/andrew/my_article_slug/draft.md',
   imageBase: 'articles/andrew/my_article_slug/',
   backgroundImage: 'images/article_tile.png',  // optional — see below
 },
 ```
+
+| Field | Required | Purpose |
+|-------|----------|---------|
+| `id` | yes | URL slug (`#article/<id>`) |
+| `title` | yes | Article title |
+| `author` | yes | Author name |
+| `publishedAt` | no | Publication date (`YYYY-MM-DD`) |
+| `excerpt` | yes | Summary on the Articles list |
+| `markdownPath` | yes | Path to Markdown file |
+| `imageBase` | yes | Folder for article images |
+| `backgroundImage` | no | Optional reader page background |
 
 ### 4. Preview
 
@@ -117,6 +130,30 @@ Change `background-size` or overlay values if you use a non-tiling image (e.g. `
 ### Optional full-bleed background
 
 `scripts/build_article_background.py` builds a one-off composite (`images/article_background.png`) from the public-domain [Mark I Perceptron](https://en.wikipedia.org/wiki/Mark_I_Perceptron) image. Use with `background-repeat: no-repeat` and `background-size: cover` in CSS if you switch away from the tile.
+
+## Contact form
+
+Submissions POST to **API Gateway + Lambda + SES**. Configure the API URL and display email in `config.json`:
+
+```json
+{
+  "contact": {
+    "email": "contact@smartyorg.com",
+    "subjectPrefix": "SOS Website Contact",
+    "formEndpoint": "https://YOUR_API.execute-api.us-east-1.amazonaws.com/development/contact"
+  }
+}
+```
+
+| Field | Purpose |
+|-------|---------|
+| `email` | Shown as mailto on the page (should match Lambda `TO_EMAIL` / SES recipient) |
+| `formEndpoint` | Full API URL including stage and `/contact` path |
+| `subjectPrefix` | Passed to Lambda for the email subject |
+
+The form sends `interest` (display label), `interestSlug`, and `message` to Lambda. The notification email includes **Topic of interest** in the subject and body. Redeploy the Lambda after pulling handler changes from `aws/contact-form/`.
+
+Deploy and test: see [aws/README.md](aws/README.md).
 
 ## Deploying
 

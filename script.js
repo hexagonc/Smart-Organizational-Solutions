@@ -1,17 +1,49 @@
 const { useState, useEffect } = React;
 
+// ===== Site config (config.json) =====
+let siteConfigCache = null;
+
+async function loadSiteConfig() {
+  if (siteConfigCache) return siteConfigCache;
+  const res = await fetch('config.json');
+  if (!res.ok) throw new Error('Could not load config.json');
+  siteConfigCache = await res.json();
+  return siteConfigCache;
+}
+
 // ===== Articles data =====
 const ARTICLES = [
   {
     id: 'ai-is-real',
     title: 'AI algorithms are grounded in our natural intuitions',
     author: 'Andrew Baughns',
+    publishedAt: '2025-05-21',
     excerpt: 'A clear-eyed look at what artificial intelligence is, how it connects to everyday intuition and middle-school math, and why public understanding matters for policy and ethics.',
     markdownPath: 'articles/andrew/1_AI_is_real/draft5.md',
     imageBase: 'articles/andrew/1_AI_is_real/',
     backgroundImage: 'images/article_tile.png',
   },
 ];
+
+const INTEREST_OPTIONS = [
+  { value: 'android-ai', label: 'Android & AI on mobile' },
+  { value: 'org-development-talent', label: 'Organizational Development and Talent' },
+  { value: 'org-leadership-coaching', label: 'Organizational Leadership and Coaching' },
+  { value: 'project-transformational-leadership', label: 'Project and Transformational Leadership' },
+  { value: 'other', label: 'Other' },
+];
+
+function formatPublishedDate(isoDate) {
+  if (!isoDate) return '';
+  const date = new Date(`${isoDate}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return isoDate;
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function getInterestLabel(value) {
+  const match = INTEREST_OPTIONS.find((opt) => opt.value === value);
+  return match ? match.label : '';
+}
 
 function articleAssetUrl(imageBase, file) {
   const base = imageBase.endsWith('/') ? imageBase.slice(0, -1) : imageBase;
@@ -133,7 +165,10 @@ function Articles() {
             <div key={article.id} className="col-md-10 col-lg-8">
               <div className="article-card card border-0 shadow-sm h-100">
                 <div className="card-body p-4">
-                  <p className="text-primary small fw-semibold mb-2">{article.author}</p>
+                  <p className="text-primary small fw-semibold mb-1">{article.author}</p>
+                  {article.publishedAt && (
+                    <p className="text-muted small mb-2">{formatPublishedDate(article.publishedAt)}</p>
+                  )}
                   <h3 className="h5 fw-bold mb-2">{article.title}</h3>
                   <p className="text-secondary mb-3">{article.excerpt}</p>
                   <a href={`#article/${article.id}`} className="btn btn-outline-primary btn-sm">
@@ -209,7 +244,10 @@ function ArticlePage({ articleId }) {
             <i className="bi bi-arrow-left me-1"></i> Back to articles
           </a>
           <header className="article-header mb-4">
-            <p className="text-primary small fw-semibold mb-2">{article.author}</p>
+            <p className="text-primary small fw-semibold mb-1">{article.author}</p>
+            {article.publishedAt && (
+              <p className="text-muted small mb-2">{formatPublishedDate(article.publishedAt)}</p>
+            )}
             <h1 className="article-title h2 fw-bold">{article.title}</h1>
           </header>
           {loading && <p className="text-secondary">Loading article…</p>}
@@ -320,12 +358,80 @@ function About() {
 
 // ===== Contact =====
 function Contact() {
+  const [config, setConfig] = useState(null);
+  const [configError, setConfigError] = useState(null);
+  const [form, setForm] = useState({ name: '', email: '', interest: '', message: '', company: '' });
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
+  useEffect(() => {
+    loadSiteConfig()
+      .then(setConfig)
+      .catch(() => setConfigError('Contact form is not configured. Please try again later.'));
+  }, []);
+
+  const updateField = (field) => (e) => {
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { formEndpoint, subjectPrefix = 'SOS Website Contact' } = config?.contact || {};
+    if (!formEndpoint) return;
+
+    if (form.company.trim()) {
+      setSubmitted(true);
+      setForm({ name: '', email: '', interest: '', message: '', company: '' });
+      return;
+    }
+
+    const interestLabel = getInterestLabel(form.interest);
+    if (!interestLabel) {
+      setSubmitError('Please select a topic of interest.');
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const res = await fetch(formEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          interest: interestLabel,
+          interestLabel,
+          interestSlug: form.interest,
+          message: form.message,
+          company: form.company,
+          subjectPrefix,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Submission failed');
+      }
+
+      setSubmitted(true);
+      setForm({ name: '', email: '', interest: '', message: '', company: '' });
+    } catch (err) {
+      setSubmitError(
+        err.message
+          ? `We could not send your message: ${err.message}`
+          : 'We could not send your message. Please try again or email us directly using the address below.'
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const contactEmail = config?.contact?.email;
+  const formEndpoint = config?.contact?.formEndpoint;
+  const formReady = Boolean(formEndpoint);
 
   return (
     <section className="contact" id="contact">
@@ -336,6 +442,9 @@ function Contact() {
         </p>
         <div className="row justify-content-center">
           <div className="col-lg-8">
+            {configError && (
+              <div className="alert alert-warning text-center">{configError}</div>
+            )}
             {submitted ? (
               <div className="alert alert-success text-center">
                 <i className="bi bi-check-circle-fill me-2"></i>
@@ -343,27 +452,80 @@ function Contact() {
               </div>
             ) : (
               <form className="contact-form" onSubmit={handleSubmit}>
+                {submitError && (
+                  <div className="alert alert-danger mb-3">{submitError}</div>
+                )}
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  className="contact-hp"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={form.company}
+                  onChange={updateField('company')}
+                  aria-hidden="true"
+                />
                 <div className="row g-3">
                   <div className="col-md-6">
-                    <input type="text" className="form-control" placeholder="Your name" required />
+                    <input
+                      type="text"
+                      name="name"
+                      className="form-control"
+                      placeholder="Your name"
+                      value={form.name}
+                      onChange={updateField('name')}
+                      required
+                      disabled={submitting || !formReady}
+                    />
                   </div>
                   <div className="col-md-6">
-                    <input type="email" className="form-control" placeholder="Email address" required />
+                    <input
+                      type="email"
+                      name="email"
+                      className="form-control"
+                      placeholder="Email address"
+                      value={form.email}
+                      onChange={updateField('email')}
+                      required
+                      disabled={submitting || !formReady}
+                    />
                   </div>
                   <div className="col-12">
-                    <select className="form-select">
+                    <select
+                      name="interest"
+                      className="form-select"
+                      value={form.interest}
+                      onChange={updateField('interest')}
+                      required
+                      disabled={submitting || !formReady}
+                    >
                       <option value="">What are you interested in?</option>
-                      <option value="android-ai">Android & AI on mobile</option>
-                      <option value="org-effectiveness">Organizational effectiveness</option>
-                      <option value="change-mgmt">Change management</option>
-                      <option value="other">Other</option>
+                      {INTEREST_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="col-12">
-                    <textarea className="form-control" rows="4" placeholder="Your message" required></textarea>
+                    <textarea
+                      name="message"
+                      className="form-control"
+                      rows="4"
+                      placeholder="Your message"
+                      value={form.message}
+                      onChange={updateField('message')}
+                      required
+                      disabled={submitting || !formReady}
+                    />
                   </div>
                   <div className="col-12">
-                    <button type="submit" className="btn btn-primary">Send message</button>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={submitting || !formReady}
+                    >
+                      {submitting ? 'Sending…' : 'Send message'}
+                    </button>
                   </div>
                 </div>
               </form>
@@ -373,7 +535,13 @@ function Contact() {
                 <i className="bi bi-envelope-fill"></i>
                 <div>
                   <strong>Email</strong><br />
-                  Use the form above to reach us. We'll respond as soon as we can.
+                  {contactEmail ? (
+                    <a href={`mailto:${contactEmail}`} className="contact-email-link">
+                      {contactEmail}
+                    </a>
+                  ) : (
+                    'Use the form above to reach us.'
+                  )}
                 </div>
               </div>
             </div>

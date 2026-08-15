@@ -508,6 +508,32 @@ section {
   margin-top: 0.2rem;
 }
 
+.contact-email-link {
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.contact-email-link:hover {
+  color: white;
+}
+
+.contact-form .form-select option {
+  color: var(--dark);
+  background: white;
+}
+
+/* Honeypot — hidden from users, not display:none (some bots skip those) */
+.contact-hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ===== Footer ===== */
 .footer {
   background: #0f111a;
