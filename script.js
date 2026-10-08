@@ -1,5 +1,67 @@
 const { useState, useEffect } = React;
 
+// ===== Site config (config.json) =====
+let siteConfigCache = null;
+
+async function loadSiteConfig() {
+  if (siteConfigCache) return siteConfigCache;
+  const res = await fetch('config.json');
+  if (!res.ok) throw new Error('Could not load config.json');
+  siteConfigCache = await res.json();
+  return siteConfigCache;
+}
+
+// ===== Articles data =====
+const ARTICLES = [
+  {
+    id: 'ai-is-real',
+    title: 'AI algorithms are grounded in our natural intuitions',
+    author: 'Andrew Baughns',
+    publishedAt: '2025-05-21',
+    excerpt: 'A clear-eyed look at what artificial intelligence is, how it connects to everyday intuition and middle-school math, and why public understanding matters for policy and ethics.',
+    markdownPath: 'articles/andrew/1_AI_is_real/draft5.md',
+    imageBase: 'articles/andrew/1_AI_is_real/',
+    backgroundImage: 'images/article_tile.png',
+  },
+];
+
+const INTEREST_OPTIONS = [
+  { value: 'android-ai', label: 'Android & AI on mobile' },
+  { value: 'org-development-talent', label: 'Organizational Development and Talent' },
+  { value: 'org-leadership-coaching', label: 'Organizational Leadership and Coaching' },
+  { value: 'project-transformational-leadership', label: 'Project and Transformational Leadership' },
+  { value: 'other', label: 'Other' },
+];
+
+function formatPublishedDate(isoDate) {
+  if (!isoDate) return '';
+  const date = new Date(`${isoDate}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return isoDate;
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function getInterestLabel(value) {
+  const match = INTEREST_OPTIONS.find((opt) => opt.value === value);
+  return match ? match.label : '';
+}
+
+function articleAssetUrl(imageBase, file) {
+  const base = imageBase.endsWith('/') ? imageBase.slice(0, -1) : imageBase;
+  // Encode path so Markdown parsers and browsers handle spaces in folder names
+  return `/${encodeURI(`${base}/${file}`)}`;
+}
+
+function preprocessMarkdown(md, imageBase) {
+  return md
+    .replace(/^#\s+.+\n+/, '')
+    .replace(/!\[\[([^\]]+)\]\]/g, (_, file) => `![${file}](${articleAssetUrl(imageBase, file)})`);
+}
+
+function getArticleIdFromHash() {
+  const match = window.location.hash.match(/^#article\/([^/]+)/);
+  return match ? match[1] : null;
+}
+
 // ===== Navbar =====
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -24,6 +86,7 @@ function Navbar() {
           <ul className="navbar-nav">
             <li className="nav-item"><a className="nav-link" href="#home">Home</a></li>
             <li className="nav-item"><a className="nav-link" href="#features">Services</a></li>
+            <li className="nav-item"><a className="nav-link" href="#articles">Articles</a></li>
             <li className="nav-item"><a className="nav-link" href="#about">About</a></li>
             <li className="nav-item"><a className="nav-link" href="#contact">Contact</a></li>
           </ul>
@@ -88,6 +151,116 @@ function Features() {
   );
 }
 
+// ===== Articles listing =====
+function Articles() {
+  return (
+    <section className="articles" id="articles">
+      <div className="container">
+        <h2 className="section-title text-center">Articles</h2>
+        <p className="section-subtitle text-center">
+          Perspectives on AI, technology, and organizational change from our team.
+        </p>
+        <div className="row g-4 justify-content-center">
+          {ARTICLES.map((article) => (
+            <div key={article.id} className="col-md-10 col-lg-8">
+              <div className="article-card card border-0 shadow-sm h-100">
+                <div className="card-body p-4">
+                  <p className="text-primary small fw-semibold mb-1">{article.author}</p>
+                  {article.publishedAt && (
+                    <p className="text-muted small mb-2">{formatPublishedDate(article.publishedAt)}</p>
+                  )}
+                  <h3 className="h5 fw-bold mb-2">{article.title}</h3>
+                  <p className="text-secondary mb-3">{article.excerpt}</p>
+                  <a href={`#article/${article.id}`} className="btn btn-outline-primary btn-sm">
+                    Read article <i className="bi bi-arrow-right ms-1"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ===== Article reader =====
+function ArticlePage({ articleId }) {
+  const article = ARTICLES.find((a) => a.id === articleId);
+  const [html, setHtml] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (!article) {
+      setError('Article not found.');
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    fetch(encodeURI(article.markdownPath))
+      .then((res) => {
+        if (!res.ok) throw new Error('Could not load article.');
+        return res.text();
+      })
+      .then((md) => {
+        const processed = preprocessMarkdown(md, article.imageBase);
+        setHtml(marked.parse(processed));
+        document.title = `${article.title} | Smart Organizational Solutions`;
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Could not load article. Please try again later.');
+        setLoading(false);
+      });
+  }, [articleId]);
+
+  if (!article) {
+    return (
+      <section className="article-page">
+        <div className="container">
+          <p className="text-danger">Article not found.</p>
+          <a href="#articles" className="btn btn-outline-primary">Back to articles</a>
+        </div>
+      </section>
+    );
+  }
+
+  const pageClass = article.backgroundImage
+    ? 'article-page article-page-with-background'
+    : 'article-page';
+
+  return (
+    <section
+      className={pageClass}
+      style={article.backgroundImage ? { '--article-bg': `url('${article.backgroundImage}')` } : undefined}
+    >
+      <div className="container">
+        <div className="article-panel">
+          <a href="#articles" className="article-back-link small text-decoration-none mb-4 d-inline-block">
+            <i className="bi bi-arrow-left me-1"></i> Back to articles
+          </a>
+          <header className="article-header mb-4">
+            <p className="text-primary small fw-semibold mb-1">{article.author}</p>
+            {article.publishedAt && (
+              <p className="text-muted small mb-2">{formatPublishedDate(article.publishedAt)}</p>
+            )}
+            <h1 className="article-title h2 fw-bold">{article.title}</h1>
+          </header>
+          {loading && <p className="text-secondary">Loading article…</p>}
+          {error && <p className="text-danger">{error}</p>}
+          {!loading && !error && (
+            <article className="article-body" dangerouslySetInnerHTML={{ __html: html }} />
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ===== About / Team =====
 function About() {
   return (
@@ -105,11 +278,34 @@ function About() {
                 <img src="images/aprill_prof_full.jpg" alt="Aprill Baughns" className="team-photo" />
               </div>
               <div className="team-section-content">
-                <p className="text-primary small fw-semibold mb-2">Organizational effectiveness &amp; change</p>
-                <h3 className="h4 fw-bold mb-2">Aprill Baughns</h3>
-                <p className="mb-0 small">
-                  Expert in organizational effectiveness and change management. Helps teams and leaders
-                  navigate complexity and deliver sustainable results.
+                <p className="team-eyebrow text-primary small fw-semibold mb-2">
+                  Transformation &amp; organizational effectiveness
+                </p>
+                <h3 className="h4 fw-bold mb-1">Aprill Baughns</h3>
+                <p className="team-title text-secondary small mb-3">
+                  Senior Director Analyst, Gartner · Transformation Architect · Business Behavioral Scientist
+                </p>
+                <p className="small mb-3">
+                  Aprill helps organizations design marketing and communications structures that scale—analyzing
+                  how teams develop, transform, and perform so leaders get actionable, evidence-based guidance.
+                  She has led complex enterprise change from strategy through delivery, including programs valued
+                  in the billions and affecting tens of thousands of employees.
+                </p>
+                <ul className="team-focus-list small mb-3">
+                  <li>Organizational transformation &amp; operational readiness</li>
+                  <li>Agile leadership, change management &amp; M&amp;A integration</li>
+                  <li>Marketing &amp; communications effectiveness at enterprise scale</li>
+                </ul>
+                <div className="team-credentials d-flex flex-wrap gap-2 mb-3">
+                  <span className="badge rounded-pill text-bg-light border">CCMP™</span>
+                  <span className="badge rounded-pill text-bg-light border">CSM®</span>
+                  <span className="badge rounded-pill text-bg-light border">CAL</span>
+                  <span className="badge rounded-pill text-bg-light border">PMP</span>
+                  <span className="badge rounded-pill text-bg-light border">Prosci</span>
+                  <span className="badge rounded-pill text-bg-light border">SAFe</span>
+                </div>
+                <p className="team-quote small fst-italic text-secondary mb-0">
+                  &ldquo;While others focus on not breaking the business, my job is to ensure employees aren&rsquo;t broken—while still not breaking the business.&rdquo;
                 </p>
               </div>
             </div>
@@ -121,11 +317,35 @@ function About() {
                 <img src="images/ugly_andrew.jpg" alt="Andrew Baughns" className="team-photo" />
               </div>
               <div className="team-section-content">
-                <p className="text-primary small fw-semibold mb-2">Android &amp; AI on mobile</p>
-                <h3 className="h4 fw-bold mb-2">Andrew Baughns</h3>
-                <p className="mb-0 small">
-                  Specializes in Android development and applying AI technology to mobile platforms.
-                  Brings technical depth and product thinking to every engagement.
+                <p className="team-eyebrow text-primary small fw-semibold mb-2">
+                  Mobile development &amp; on-device AI
+                </p>
+                <h3 className="h4 fw-bold mb-1">Andrew Baughns</h3>
+                <p className="team-title text-secondary small mb-3">
+                  Mobile Developer · AI Specialist · On-Device AI &amp; Intelligent Applications
+                </p>
+                <p className="small mb-3">
+                  Andrew brings nearly two decades of end-to-end Android experience, from architecture and
+                  Play Store delivery to integrating generative AI and large language models on mobile devices.
+                  He has led development for telematics platforms, voice assistants, and privacy-focused LLM
+                  infrastructure—combining clean architecture, CI/CD, and a top-down, iterative approach to
+                  ship intelligently designed apps that are easy to understand and evolve.
+                </p>
+                <ul className="team-focus-list small mb-3">
+                  <li>Android applications, clean architecture &amp; CI/CD at production scale</li>
+                  <li>Generative AI, LLMs &amp; intelligent agents on mobile and in the cloud</li>
+                  <li>Mobile sensing, geolocation, UX design (Figma) &amp; privacy-conscious platforms</li>
+                </ul>
+                <div className="team-credentials d-flex flex-wrap gap-2 mb-3">
+                  <span className="badge rounded-pill text-bg-light border">Android</span>
+                  <span className="badge rounded-pill text-bg-light border">Gen AI</span>
+                  <span className="badge rounded-pill text-bg-light border">LLMs</span>
+                  <span className="badge rounded-pill text-bg-light border">CI/CD</span>
+                  <span className="badge rounded-pill text-bg-light border">MIT</span>
+                  <span className="badge rounded-pill text-bg-light border">Georgia Tech MS CS</span>
+                </div>
+                <p className="team-quote small fst-italic text-secondary mb-0">
+                  &ldquo;The goal is not to write perfect code, but code that is easy to understand, change, and aligned with a consistent design approach.&rdquo;
                 </p>
               </div>
             </div>
@@ -138,12 +358,80 @@ function About() {
 
 // ===== Contact =====
 function Contact() {
+  const [config, setConfig] = useState(null);
+  const [configError, setConfigError] = useState(null);
+  const [form, setForm] = useState({ name: '', email: '', interest: '', message: '', company: '' });
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
+  useEffect(() => {
+    loadSiteConfig()
+      .then(setConfig)
+      .catch(() => setConfigError('Contact form is not configured. Please try again later.'));
+  }, []);
+
+  const updateField = (field) => (e) => {
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { formEndpoint, subjectPrefix = 'SOS Website Contact' } = config?.contact || {};
+    if (!formEndpoint) return;
+
+    if (form.company.trim()) {
+      setSubmitted(true);
+      setForm({ name: '', email: '', interest: '', message: '', company: '' });
+      return;
+    }
+
+    const interestLabel = getInterestLabel(form.interest);
+    if (!interestLabel) {
+      setSubmitError('Please select a topic of interest.');
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const res = await fetch(formEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          interest: interestLabel,
+          interestLabel,
+          interestSlug: form.interest,
+          message: form.message,
+          company: form.company,
+          subjectPrefix,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Submission failed');
+      }
+
+      setSubmitted(true);
+      setForm({ name: '', email: '', interest: '', message: '', company: '' });
+    } catch (err) {
+      setSubmitError(
+        err.message
+          ? `We could not send your message: ${err.message}`
+          : 'We could not send your message. Please try again or email us directly using the address below.'
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const contactEmail = config?.contact?.email;
+  const formEndpoint = config?.contact?.formEndpoint;
+  const formReady = Boolean(formEndpoint);
 
   return (
     <section className="contact" id="contact">
@@ -154,6 +442,9 @@ function Contact() {
         </p>
         <div className="row justify-content-center">
           <div className="col-lg-8">
+            {configError && (
+              <div className="alert alert-warning text-center">{configError}</div>
+            )}
             {submitted ? (
               <div className="alert alert-success text-center">
                 <i className="bi bi-check-circle-fill me-2"></i>
@@ -161,27 +452,80 @@ function Contact() {
               </div>
             ) : (
               <form className="contact-form" onSubmit={handleSubmit}>
+                {submitError && (
+                  <div className="alert alert-danger mb-3">{submitError}</div>
+                )}
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  className="contact-hp"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={form.company}
+                  onChange={updateField('company')}
+                  aria-hidden="true"
+                />
                 <div className="row g-3">
                   <div className="col-md-6">
-                    <input type="text" className="form-control" placeholder="Your name" required />
+                    <input
+                      type="text"
+                      name="name"
+                      className="form-control"
+                      placeholder="Your name"
+                      value={form.name}
+                      onChange={updateField('name')}
+                      required
+                      disabled={submitting || !formReady}
+                    />
                   </div>
                   <div className="col-md-6">
-                    <input type="email" className="form-control" placeholder="Email address" required />
+                    <input
+                      type="email"
+                      name="email"
+                      className="form-control"
+                      placeholder="Email address"
+                      value={form.email}
+                      onChange={updateField('email')}
+                      required
+                      disabled={submitting || !formReady}
+                    />
                   </div>
                   <div className="col-12">
-                    <select className="form-select">
+                    <select
+                      name="interest"
+                      className="form-select"
+                      value={form.interest}
+                      onChange={updateField('interest')}
+                      required
+                      disabled={submitting || !formReady}
+                    >
                       <option value="">What are you interested in?</option>
-                      <option value="android-ai">Android & AI on mobile</option>
-                      <option value="org-effectiveness">Organizational effectiveness</option>
-                      <option value="change-mgmt">Change management</option>
-                      <option value="other">Other</option>
+                      {INTEREST_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="col-12">
-                    <textarea className="form-control" rows="4" placeholder="Your message" required></textarea>
+                    <textarea
+                      name="message"
+                      className="form-control"
+                      rows="4"
+                      placeholder="Your message"
+                      value={form.message}
+                      onChange={updateField('message')}
+                      required
+                      disabled={submitting || !formReady}
+                    />
                   </div>
                   <div className="col-12">
-                    <button type="submit" className="btn btn-primary">Send message</button>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={submitting || !formReady}
+                    >
+                      {submitting ? 'Sending…' : 'Send message'}
+                    </button>
                   </div>
                 </div>
               </form>
@@ -191,7 +535,13 @@ function Contact() {
                 <i className="bi bi-envelope-fill"></i>
                 <div>
                   <strong>Email</strong><br />
-                  Use the form above to reach us. We'll respond as soon as we can.
+                  {contactEmail ? (
+                    <a href={`mailto:${contactEmail}`} className="contact-email-link">
+                      {contactEmail}
+                    </a>
+                  ) : (
+                    'Use the form above to reach us.'
+                  )}
                 </div>
               </div>
             </div>
@@ -222,6 +572,7 @@ function Footer() {
             <ul className="list-unstyled">
               <li><a href="#home">Home</a></li>
               <li><a href="#features">Services</a></li>
+              <li><a href="#articles">Articles</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
             </ul>
@@ -244,12 +595,33 @@ function Footer() {
 
 // ===== App =====
 function App() {
+  const [articleId, setArticleId] = useState(getArticleIdFromHash());
+
+  useEffect(() => {
+    const onHashChange = () => setArticleId(getArticleIdFromHash());
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  if (articleId) {
+    return (
+      <>
+        <Navbar />
+        <main>
+          <ArticlePage articleId={articleId} />
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <Navbar />
       <main>
         <Hero />
         <Features />
+        <Articles />
         <About />
         <Contact />
         <Footer />
