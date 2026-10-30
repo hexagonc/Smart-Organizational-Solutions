@@ -6,13 +6,29 @@ Professional website for SOS — a two-person high-tech consultancy (mobile, AI,
 
 The site is plain, pre-rendered HTML. A small Python build step turns the page template and the Markdown articles into static files in `dist/`. Visitors (and search engines and LinkedIn/X link previews) get the full page content immediately; there is no React or Babel compile step in the browser.
 
+The build also converts the main-site images to resized WebP, publishes Andrew's portfolio under `/andrew/`, writes `sitemap.xml`, `robots.txt`, Open Graph tags and schema.org data, and copies `config.json` if it exists.
+
+## Running the website locally
+
+Run these commands from the repository root. Python 3 is required.
+
 ```bash
-pip install markdown Pillow
-python3 scripts/build_site.py              # writes dist/
-python3 -m http.server -d dist 8080        # preview at http://localhost:8080
+# Install build dependencies (only needed once)
+python3 -m pip install markdown Pillow
+
+# Generate the static website in dist/
+python3 scripts/build_site.py
+
+# Serve dist/ at http://localhost:8080
+python3 -m http.server 8080 --directory dist
 ```
 
-The build also converts images to resized WebP (about 600 KB for the whole site instead of about 14 MB), writes `sitemap.xml`, `robots.txt`, Open Graph tags and schema.org data, and copies `config.json` if it exists.
+Open the following URLs in a browser:
+
+- Main website: <http://localhost:8080/>
+- Andrew's portfolio: <http://localhost:8080/andrew/>
+
+Keep the terminal running while viewing the site. Press **Ctrl+C** to stop the web server. Re-run the build command after changing source files.
 
 ## Project layout
 
@@ -23,6 +39,7 @@ The build also converts images to resized WebP (about 600 KB for the whole site 
 | `style.css` | Styles, including the article reader and backgrounds |
 | `articles.json` | Article list (title, author, date, excerpt, Markdown path) |
 | `articles/` | Markdown sources and per-article images |
+| `portfolio website/` | Andrew's portfolio source; published under `/andrew/` by the main build |
 | `images/` | Original, full-size site images (the build makes web copies) |
 | `scripts/build_site.py` | Static site build |
 | `scripts/build_article_*.py` | Utilities to generate article backgrounds |

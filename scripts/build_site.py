@@ -26,6 +26,7 @@ from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
+PORTFOLIO_SRC = ROOT / "portfolio website"
 SITE_URL = "https://www.smartyorg.com"
 CONTACT_EMAIL = "contact@smartyorg.com"
 YEAR = date.today().year
@@ -286,8 +287,42 @@ def build_index(articles: list[dict], imgs: dict) -> None:
     (DIST / "index.html").write_text(page, encoding="utf-8")
 
 
+def build_portfolio() -> None:
+    """Publish Andrew's standalone portfolio as the /andrew section of SOS."""
+    out = DIST / "andrew"
+    out.mkdir(parents=True, exist_ok=True)
+    shutil.copy(PORTFOLIO_SRC / "index.html", out / "index.html")
+    shutil.copytree(PORTFOLIO_SRC / "assets", out / "assets")
+    shutil.copytree(PORTFOLIO_SRC / "apps", out / "apps")
+
+    # Keep the portfolio independently publishable at evolved-automata.com.
+    # Rewrite canonical URLs only in the SOS build and add a local route home.
+    for page_path in out.rglob("*.html"):
+        page = page_path.read_text(encoding="utf-8")
+        page = page.replace("https://evolved-automata.com/", f"{SITE_URL}/andrew/")
+        if page_path == out / "index.html":
+            page = page.replace(
+                '<li class="hide-sm"><a class="link" href="#about">About</a></li>',
+                '<li class="hide-sm"><a class="link" href="#about">About</a></li>\n'
+                '      <li class="hide-sm"><a class="link" href="../index.html">SOS Home</a></li>',
+            )
+            page = page.replace(
+                '<a href="https://www.smartyorg.com/" target="_blank" rel="noopener">Smart Organizational Solutions</a>',
+                '<a href="../index.html">Smart Organizational Solutions</a>',
+            )
+            page = page.replace(
+                '<a href="https://www.smartyorg.com/" target="_blank" rel="noopener">Consultancy <span>smartyorg.com</span></a>',
+                '<a href="../index.html">Consultancy <span>SOS home</span></a>',
+            )
+        page_path.write_text(page, encoding="utf-8")
+
+
 def build_sitemap(articles: list[dict]) -> None:
     urls = [SITE_URL + "/"] + [f"{SITE_URL}/articles/{a['id']}/index.html" for a in articles]
+    urls.extend(
+        f"{SITE_URL}/{page.relative_to(DIST).as_posix()}"
+        for page in sorted((DIST / "andrew").rglob("*.html"))
+    )
     body = "\n".join(f"  <url><loc>{u}</loc></url>" for u in urls)
     (DIST / "sitemap.xml").write_text(
         f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}\n</urlset>\n')
@@ -308,6 +343,7 @@ def main() -> None:
     for a in articles:
         build_article(a, imgs)
     build_index(articles, imgs)
+    build_portfolio()
     build_sitemap(articles)
     total = sum(p.stat().st_size for p in DIST.rglob("*") if p.is_file())
     print(f"Built {len(articles)} article(s) into {DIST} ({total/1024:.0f} KB total)")
