@@ -1,0 +1,35 @@
+---
+title: Welcome — programmable notes
+custom-meta:
+  onboarding-step: 1
+  summary: Promo-friendly lead — notes-first, purpose, optional AI (reuse in store copy).
+---
+# Welcome — programmable notes
+
+Noetic Journal is a **programmable note tree**: folders and pages you already understand, plus **purpose** (rules per note), **Lisp** macros, scheduled commands, and optional **document managers** when you enable AI on a note.
+
+This page is a **short pitch** you can reuse in store listings and outreach. The full tour lives on [initial experience](noetic://document/initial%20experience).
+
+## Day one
+
+- Capture and organize notes in **collections** (diaries, checklists, projects).
+- Run **macros** from the toolbar or speech.
+- **Talk to a note** with **simple chat** (ask, tell, command)—without treating every note as an autonomous agent.
+- Turn on **remote** or **local AI** when you want it ([Configure AI](noetic://document/Configure%20AI), [Configure local AI](noetic://document/Configure%20local%20AI)).
+
+## Grows with you
+
+- **Purpose** — how the note should behave and which tools are allowed.
+- **Scripting** — same DLisp for macros, automation, and managers ([Scripting overview](noetic://document/Scripting%20overview)).
+- **Optional discourse depth** — **context chat** (one note + `action-lisp`) and **Hi-IQ** (tree context, peer notes when purpose allows)—see [Document managers and collaboration](noetic://document/Document%20managers%20and%20collaboration).
+
+## Why it feels different
+
+| Typical “AI notes” | Noetic Journal |
+| --- | --- |
+| One global assistant | **Per-note purpose** and scripts |
+| Opaque behavior | **Tool Catalog** + readable Lisp |
+| Chat-first | **Notes-first** |
+| Agent hype | **Your tree**, optional depth |
+
+[Open Library](noetic://screen/dashboard) · [Full welcome tour](noetic://document/initial%20experience)

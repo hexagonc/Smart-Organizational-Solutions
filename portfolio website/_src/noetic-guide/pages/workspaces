@@ -1,0 +1,33 @@
+---
+title: workspaces
+custom-meta:
+  onboarding-step: 2
+---
+# Workspaces
+
+A **workspace** is a named set of note references for one project or context—Android notes, a trip plan, onboarding docs—without copying files. Switch workspaces from the note editor **Tools** sheet → **Workspace** tab.
+
+## Add notes to a workspace
+
+1. Open a note.
+2. Open the **Tools** sheet → **Workspace** tab.
+3. Tap **W+** to create a workspace or pick an existing one.
+4. Use **Add note to workspace** (from the same sheet) while editing other notes you want in the set.
+
+![Workspace tab (Cyber theme)](<asset://images/onboarding_workspace_tab_cyber.png>)
+
+![Workspace tab (default light theme)](<asset://images/onboarding_workspace_tab_default_light.png>)
+
+Each row shows the note title and collection path. Tap **×** to remove a reference (the underlying note is not deleted).
+
+## Library vs workspace
+
+| | Library tree | Workspace |
+| --- | --- | --- |
+| Purpose | Permanent hierarchy | Temporary or topical grouping |
+| Scope | Whole collection | Your chosen list |
+| Search | Can search **workspace** mode | See [search your notes](noetic://document/search%20your%20notes) |
+
+Power users manage **global collections** and post-init scripts under **Profile**; daily writing usually stays in the Workspace tab on the notes you already have open.
+
+[Back to welcome](noetic://document/initial%20experience)

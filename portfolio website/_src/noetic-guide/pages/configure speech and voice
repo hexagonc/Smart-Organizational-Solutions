@@ -1,0 +1,32 @@
+---
+title: configure speech and voice
+custom-meta:
+  onboarding-step: 3
+---
+# Speech and voice
+
+Noetic Journal can **listen** for commands and **speak** answers. Use cloud speech services or on-device recognition, depending on your build and feature choices.
+
+## Enable speech
+
+1. Use the first-run onboarding checkboxes, or open **Profile → Speech recognition** after setup.
+2. Turn on **speech recognition** (and download the on-device model if offered).
+3. Grant **Microphone** permission when Android prompts you.
+
+![Speech recognition settings](<asset://images/onboarding_speech_recognition_cyber.png>)
+
+## Wake phrases and handlers
+
+Background listening uses **speech handlers**—Lisp scripts matched to phrases you define. Configure them from **Profile → Speech handlers**; beginners can rely on **Help** and the global wake phrase map in settings.
+
+## Voice output
+
+Text-to-speech uses the system voice or your chosen engine under **Profile → TTS voices**. Scheduled reminders and chat replies can speak aloud when the action requests it.
+
+## Example
+
+After setup, open **Help** and try *“remind me to stretch at 3pm”* or *“add buy milk to my to-do list.”*
+
+![Help dialog](<asset://images/onboarding_help_dialog_cyber.png>)
+
+[Back to welcome](noetic://document/initial%20experience) · [Help](noetic://dialog/help)

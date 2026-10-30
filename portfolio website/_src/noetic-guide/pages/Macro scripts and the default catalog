@@ -1,0 +1,76 @@
+---
+title: Macro scripts and the default catalog
+custom-meta:
+  onboarding-step: 22
+---
+# Macro scripts and the default catalog
+
+Macros are **your shortcuts, stored as notes** in **current configuration / default macros**. They register at startup—sync the shared collection to ship new macros without an app release. Same Lisp stack as document managers and Help **Show me** demos.
+
+## What is a macro?
+
+A **macro** is a **named Lisp script** stored in your journal’s macro catalog. Macros:
+
+- Run **manually** from **Menu → Tools / Macros** (**Run**, **Edit**, **Delete**)  
+- Have **no arguments** at invoke time (configure via dialogs inside the script)  
+- Execute in the **UI automation** environment when the app is foregrounded  
+- Can be triggered from Help, embedded actions, or copied **script triggers** for logging/automation hooks  
+
+The app ships a **default macros** collection (imported with global configuration). Treat it as a **standard library of runnable examples**—much built-in behavior is exposed here so you can learn, fork, and customize.
+
+## Catalog highlights
+
+| Macro | Why it matters |
+| --- | --- |
+| **show-current-doc-as-markdown** | Renders the **focus note** body as Markdown in a dialog—better reading for long prose or exported structure. Body: read focus doc with markdown flag → `show-markdown-dialog`. |
+| **show-flashcard-browser** | Interactive **flashcard self-test** (see below). |
+| **create-topic-flashcards-walkthrough** | Checklist-style guide for building a flashcard tree from a lecture, article, or book. |
+| **append new diary entry** / **append new to do item** | Append to **registered journals** or **registered to-do lists** via forms (uses low model for structured append when configured). |
+| **unfinished-chores-reminder** | Speaks a summary from a chore doc using **`advanced-doc-chat`**. |
+| **set current task as finished** / **set current doc as complete** | Quick status updates on focus or task docs. |
+| **show percentage of doc construction is complete** / **show percentage of doc task is finished** | Progress helpers for structured project docs. |
+| **configure-doc-as-filter** / **configure-as-function-def** | Wire doc properties for filters and callable definitions. |
+| **sync-current-doc-up** / **sync-current-doc-down** | Dropbox sync helpers for the open note. |
+| **register named location** / **location geofence reminder** | Location automation entry points. |
+| **onboarding** | Walkthrough driver for first-run (loads **initial experience** links). |
+
+Edit any macro to match your doc ids, scratch defaults, or model preferences.
+
+## Flashcard tester (`show-flashcard-browser`)
+
+Noetic Journal supports **learning and self-assessment** through a simple **tree convention**:
+
+1. Create a **flashcard root subject doc** (any collection).  
+2. Each **direct child** is a **flashcard**: **title = question**, **body = answer**.  
+3. Register decks under the app’s flashcard registry (see Help: *“how can I create flashcards from my notes?”*).  
+
+The macro:
+
+- Lets you pick a **deck** and optionally **reset** per-card stats (`last-tested` metadata).  
+- Chooses the next card among questions ending in **`?`**, preferring cards **least recently answered correctly**, with **prerequisite** cards (ancestor questions) satisfied within a **forget window**.  
+- Prompts for your answer; optionally uses **local or remote AI** to judge similarity to the expected answer (self-test mode, not high-stakes grading).  
+- Updates timestamps on success so spacing adapts over time.  
+
+Dependency groups and concept-model siblings are described in the Help article **Creating flashcards from a linear information presentation**.
+
+## Help automation uses the same stack
+
+When you ask Help a question and tap **Show me**, the app runs **macro/UI automation** toward that goal—then pauses on steps only you can complete (permissions, picking a deck, typing an API key). The Lisp you see in **Tools / Macros** is the same technology.
+
+## Scratch pad vs macros
+
+| | **Macros** | **Scratch `<< … >>`** |
+| --- | --- | --- |
+| Environment | UI automation (dialogs, focus doc) | Journal (background-friendly) |
+| Discovery | Named catalog, Help triggers | Key/value store, Run button |
+| Best for | Guided flows, demos, repeatable UI | One-off maintenance, init snippets, scheduled command prototypes |
+
+Future shared **scratch keys** in the app init script will mirror registered journals/to-do lists—same pattern as default macros import.
+
+## Related
+
+- [Scripting overview](noetic://document/Scripting%20overview)  
+- [Document managers and collaboration](noetic://document/Document%20managers%20and%20collaboration)  
+- Help: [how can I create flashcards from my notes?](noetic://document/how%20can%20I%20create%20flashcards%20from%20my%20notes%3F)  
+
+**Planned:** a **view focus doc as HTML** macro (CSS from doc properties or child docs)—not shipped yet; use markdown preview today.

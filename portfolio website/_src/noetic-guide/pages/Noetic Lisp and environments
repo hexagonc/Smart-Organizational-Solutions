@@ -1,0 +1,75 @@
+---
+title: Noetic Lisp and environments
+custom-meta:
+  onboarding-step: 21
+---
+# Noetic Lisp and environments
+
+The app embeds a **DLisp** dialect: Lisp-shaped syntax with Noetic-specific types, libraries, and execution rules. It is **not** full Common Lisp—treat the in-app **Tool Catalog** and `(function-exists-p "name")` as ground truth.
+
+**Purpose** on each note is the main human- and LLM-readable contract (local or **effective** with inheritance). Document managers and `<< … >>` fields read that contract; you change behavior by editing **purpose** and named functions, not by hiding logic in opaque app settings.
+
+## Execution environments (binding)
+
+Functions live in one or more **binding environments**. Child environments **inherit** parent bindings unless a name is shadowed locally.
+
+| Environment | Role | Typical use |
+| --- | --- | --- |
+| **Journal** (`JOURNAL`) | Global system environment | Scheduled commands, repo-wide doc ops, `(simple-doc-ask …)`, scratch-backed globals |
+| **UI automation** (`AUTOMATION`) | Child of journal while the app UI is active | Macros, Help “Show me”, dialogs (`show-input-form-dialog`, `show-markdown-dialog`), focus doc |
+| **Document** (`DOCUMENT`) | Per-note `docEnv` | Purpose rules, embedded fields, manager tool calls scoped to that note |
+
+**Macros** (Menu → **Tools / Macros**) run in **UI automation** when the foreground app is available; otherwise the runner falls back to journal scope.
+
+**Scratch pad** (Menu → **Scratch**) stores key/value text globally. Wrap a script in **`<<` … `>>`** delimiters and tap **Run** to evaluate in the **journal** environment—no UI widgets required. Shared init scripts can preload scratch keys (registered journals, to-do lists, starter snippets) the same way default macros are imported.
+
+**REPL** (where enabled) adds `(print …)` history rows on journal, automation, and document environments for debugging.
+
+## Tool Catalog categories
+
+Open **Tool Catalog** from the menu to browse callable functions. Tabs include **ALL**, **FAVORITES**, and **CUSTOM** (your agent tools), plus built-in groupings aligned with registration sites, for example:
+
+- **ESSENTIAL RUNTIME** — `defun`, `setq`, `if`, `for`, `mapcar`, hashtables, strings  
+- **BASIC SYSTEM LLM** — `simple-doc-ask`, `simple-doc-tell`, `simple-doc-command`, `advanced-doc-chat`, model helpers  
+- **GLOBAL DOC MANAGEMENT** / **LOCAL DOC MANAGEMENT** — tree ops, focus doc, filters, completion status  
+- **GLOBAL UI** — dialogs, navigation, screenshots, camera snapshot helpers (often **UI_FOREGROUND** context)  
+- **GLOBAL SCRATCH** — `scratch-get` / `scratch-set`  
+- **GLOBAL BACKGROUND** — jobs that outlive a single UI session  
+- **GLOBAL SPEECH** — ASR, TTS, listening coordination  
+- **GLOBAL TOOL CATALOG** — `(list-tool-catalog …)`, `(list-tool-catalog-categories)`  
+- **REGISTERED LOCATIONS**, **GLOBAL MEDIA**, **GLOBAL NOTIFICATIONS**, and others  
+
+Some functions are restricted by **context** (e.g. must run in the foreground UI). The catalog description on each function explains access.
+
+## Talking to document managers from Lisp
+
+Scoped, **one-shot** manager calls (no persistent chat log on the script side):
+
+- **`(simple-doc-ask question doc-id [prefers-high-model] [images])`**  
+- **`(simple-doc-tell statement doc-id …)`**  
+- **`(simple-doc-command command doc-id …)`**  
+
+Optional **images** use a string hashtable (gallery URIs, `(take-camera-snapshot)`, `(uri-as-image-map …)` for vision-capable models.
+
+**`(advanced-doc-chat user-message doc-id timeout-minutes [allow-low-model] [images])`** opens a **full manager chat** with timeout—use for multi-step reasoning (e.g. summarizing an unfinished chore list via TTS in the **unfinished-chores-reminder** macro).
+
+## Differences from Common Lisp (high impact)
+
+| Topic | Common Lisp habit | Noetic DLisp |
+| --- | --- | --- |
+| Truthiness | `nil` and `()` are false | Only **`F`** is false; **`()` is true** |
+| Empty lists | `(if ids …)` false when nil | Use **`(non-empty ids)`** — bare `()` is truthy |
+| Lists | `car` / `cdr` chains | **Array-like** lists: `first`, `nth`, `rest`, `length` |
+| Iteration | `loop`, `(mapcar #'fn list)` | **`for`**, **`mapcar`** with loop-spec—no CL `loop` macro |
+| Format | `(format nil "~A" x)` | **`format`** is Java-style `" %s "` strings, not CL format |
+| Equality | `equal` / `eql` | **`=`** for numbers; **`equals`** compares string forms |
+| Catch | `(catch 'tag …)` | **`catch`** is a **defmacro** with handler forms; see app init script |
+| Missing key | `gethash` default | Missing keys return **`F`**; use **`contains-hash-key`** |
+
+When porting CL snippets, check **Tool Catalog → ESSENTIAL RUNTIME** and the deviations reference bundled with the app documentation repo.
+
+## Power beyond menus
+
+Scripts can chain **speech** (listen → act), **camera / vision** models, **Dropbox sync**, **search**, and **peer manager** delegation—subject to permissions and your model configuration. Start from **default macros** (next page) before writing your own.
+
+**Next:** [Macro scripts and the default catalog](noetic://document/Macro%20scripts%20and%20the%20default%20catalog)

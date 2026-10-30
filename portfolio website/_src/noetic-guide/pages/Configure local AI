@@ -1,0 +1,32 @@
+---
+title: Configure local AI
+custom-meta:
+  onboarding-step: 1
+---
+# On-device AI (local models)
+
+Local models run **on your phone**—useful when you want assistance without sending note text to a cloud API. Download size and RAM requirements vary; the app shows free storage/memory and warns when a model is a poor match for your device.
+
+## What to configure
+
+1. On first run, enable **local AI** from the [welcome tour](noetic://document/initial%20experience) checkboxes, or open **Profile → Model configuration** anytime.
+2. Open **Profile → Model configuration** and download a supported **local** checkpoint (for example Gemma-family models your build lists under **Available**).
+3. Wait until the model appears under **Ready** before relying on chat or background detection.
+4. Models marked **VISION** can use images you attach to notes—turn on **Include images in discourse chat** on the note or in chat settings.
+
+![Local model download and VISION settings](<asset://images/onboarding_model_config_local_rose.png>)
+
+Adjust **context window** and **max new tokens** sliders before the model loads as HIGH or LOW; values apply on next load.
+
+## Trade-offs
+
+| | Local | Cloud |
+| --- | --- | --- |
+| Privacy | Stays on device | Sent to provider |
+| Quality / speed | Depends on phone | Usually stronger |
+| Offline | Often yes | Needs network |
+| Vision | Some local models | Many cloud models |
+
+Speech recognition can also run locally—see [configure speech and voice](noetic://document/configure%20speech%20and%20voice).
+
+[Back to welcome](noetic://document/initial%20experience) · [Cloud AI](noetic://document/Configure%20AI)

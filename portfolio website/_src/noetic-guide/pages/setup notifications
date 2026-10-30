@@ -1,0 +1,30 @@
+---
+title: setup notifications
+custom-meta:
+  onboarding-step: 7
+---
+# Notifications and scheduled commands
+
+Reminders, task due alerts, and background work use Android **notifications**. Long jobs (search, sync, speech listening) may show a **foreground service** notification while they run.
+
+## Permissions
+
+On Android 13+, allow **Notifications** when prompted. Denying notifications hides reminder toasts and status for scheduled work—you can re-enable in system Settings.
+
+## Scheduled commands
+
+Open menu → **Scheduled commands** to review one-shot and repeating jobs created by Help (*“remind me to … at …”*) or your own Lisp. Each entry shows the next run time and whether it fires a **document command** or a **script**.
+
+![Scheduled commands list](<asset://images/onboarding_scheduled_commands_cyber.png>)
+
+Task due dates can also surface as system notifications when reminders fire:
+
+![Task due notification example](<asset://images/onboarding_task_notification.png>)
+
+## Best practices
+
+- Use plain language in **Help** to create schedules; confirm the summary before saving.
+- For location reminders, complete [setup location](noetic://document/setup%20location) first.
+- Open **App status** from the menu if a job seems stuck.
+
+[Back to welcome](noetic://document/initial%20experience) · [Scheduled commands](noetic://dialog/scheduled%20commands)

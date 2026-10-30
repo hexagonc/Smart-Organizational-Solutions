@@ -1,0 +1,26 @@
+---
+title: setup location
+custom-meta:
+  onboarding-step: 4
+---
+# Location and place reminders
+
+Save **named places** (home, work, a store) and trigger reminders when you arrive or leave.
+
+## Permissions
+
+Location access is requested when you register a place or enable a geofence reminder. **Background location** is only needed for arrive/leave automations while Noetic Journal is not open—Android shows a separate prompt. You can skip it and still use manual location features.
+
+## Register a place
+
+1. Open **Profile → Location reminders** (or [Settings](noetic://screen/settings) → registered locations).
+2. Add a name and set coordinates from your current fix or search.
+3. Places often live in your **me** collection under **my things / places** when that tree is installed.
+
+![Location reminders and GPS settings](<asset://images/onboarding_location_reminders_cyber.png>)
+
+## Reminders
+
+Say or type in **Help**: *“remind me to … when I get to …”* and confirm the summary. You can also create location-aware jobs from menu → **Scheduled commands**.
+
+[Back to welcome](noetic://document/initial%20experience) · [Help: location reminder](noetic://dialog/help)

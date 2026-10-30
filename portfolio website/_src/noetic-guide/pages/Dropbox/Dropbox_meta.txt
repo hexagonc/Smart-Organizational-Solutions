@@ -1,0 +1,8 @@
+---
+title: Dropbox
+custom-meta:
+  onboarding-step: 6
+---
+# Dropbox folder
+
+Child note: [cloud provider setup](noetic://document/cloud%20provider%20setup).

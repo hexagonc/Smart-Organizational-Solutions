@@ -1,0 +1,83 @@
+---
+title: initial experience
+custom-meta:
+  onboarding-step: 0
+  personal repo name: library
+---
+# Welcome to Noetic Journal
+
+Noetic Journal is a **programmable note tree**: hierarchical notes and collections you already understand, plus a layer **you** control — **purpose** text on each note, **Lisp** macros, scheduled commands, and optional **document managers** that speak for a note when you use AI.
+
+This is not “another chat app with agents.” The center of gravity is **your writing and your rules**. AI is optional (remote BYOK, local on-device, or none). You choose what is stored, what runs, and which providers you trust. Think of the app as a *complementary cognitive device*—technology that extends memory and planning without replacing your judgment.
+
+![Library and collections](<asset://images/onboarding_library_collections_cyber.png>)
+
+## How this tour works
+
+Tap a topic below to open a short page. Read them in any order. When you are ready to write and explore, open your [Library](noetic://screen/dashboard) or ask [Help](noetic://dialog/help) in plain English.
+
+## Optional setup
+
+These pages match the choices on the first-run screen. None of them block basic note-taking.
+
+| Topic | Why bother |
+| --- | --- |
+| [Configure AI](noetic://document/Configure%20AI) | Cloud models (BYOK) for chat, search, and Help |
+| [Configure local AI](noetic://document/Configure%20local%20AI) | On-device models—including vision—for more privacy |
+| [camera setup](noetic://document/camera%20setup) | Snap photos and attach gallery images to notes |
+| [configure speech and voice](noetic://document/configure%20speech%20and%20voice) | Talk to the app and hear replies |
+| [setup location](noetic://document/setup%20location) | Reminders when you arrive somewhere |
+| [setup music and media](noetic://document/setup%20music%20and%20media) | Play music and log how it makes you feel |
+| [cloud provider setup](noetic://document/cloud%20provider%20setup) | Backup and sync with Dropbox |
+| [setup notifications](noetic://document/setup%20notifications) | Alarms and scheduled commands |
+| [workspaces](noetic://document/workspaces) | Group notes for a project without duplicating files |
+| [search your notes](noetic://document/search%20your%20notes) | Keyword search across large libraries |
+
+## Scripting and document managers
+
+Automation is a first-class feature—not an afterthought. These pages go deeper than the menu tour:
+
+| Topic | Why bother |
+| --- | --- |
+| [Welcome — programmable notes](noetic://document/Welcome%20%E2%80%94%20programmable%20notes) | Short pitch (store copy, outreach); notes-first framing |
+| [Scripting overview](noetic://document/Scripting%20overview) | Help “Show me”, macros, scheduled commands, Scratch |
+| [Noetic Lisp and environments](noetic://document/Noetic%20Lisp%20and%20environments) | Journal vs UI vs doc environments; Tool Catalog; vs Common Lisp |
+| [Macro scripts and the default catalog](noetic://document/Macro%20scripts%20and%20the%20default%20catalog) | Built-in macros, flashcard tester, markdown preview |
+| [Document managers and collaboration](noetic://document/Document%20managers%20and%20collaboration) | Purpose-driven managers, discourse modes, journals & checklists |
+
+## What you can do day to day
+
+**Library and workspaces.** Your **Library** tree holds collections (journal, tasks, reference, flashcards, and anything you add). **Workspaces** group notes for a project or context—see [workspaces](noetic://document/workspaces).
+
+**Write and organize.** Every note has a **title** for search and links. Parent/child structure keeps diaries, projects, and “my things” lists tidy. The note **Tools** sheet adds photos, camera captures, speech handlers, presets, and sync actions. **About → Storage** can report on-disk size (note file + sidecar) when you tap **Calculate on-disk size**.
+
+![Attach photos from the note Tools sheet](<asset://images/onboarding_note_tools_attach_photo_cyber.png>)
+
+**Talk with your notes (optional).** Open **Talk to me** on a note for **simple chat** by default (ask, tell, command). Turn on **context chat** or **Hi-IQ** in the discourse dialog when you need executable Lisp in the loop or broader tree context—power-user modes, not the default pitch. Attach images and enable **Include images in discourse** so vision-capable models can see linked photos.
+
+![Discourse with linked images](<asset://images/onboarding_discourse_with_context_cyber.png>)
+
+**Help, not menus.** From the menu, open **Help** and describe what you want (*“remind me to …”*, *“download and play …”*, *“how do I filter journal entries?”*). The app finds instructions and can **Show me** a demo when one exists.
+
+**Search at scale.** Menu → **Search** streams **partial results** while a job runs—handy when you cannot remember which collection held a note. See [search your notes](noetic://document/search%20your%20notes).
+
+**AI is optional.** Use remote APIs, a private server, **local on-device** models (some builds support **vision**), or no AI at all. Verify important answers—generators can be wrong.
+
+**Look and feel.** Global **themes** (Cyber, Dark, Rose, Sepia, and others) apply across the app; individual notes can override accent colors for editing. **About** (under the Tools sheet) lists version info and legal notices.
+
+## Why it feels different
+
+| Typical “AI notes” | Noetic Journal (MVP) |
+| --- | --- |
+| One global assistant | **Per-note purpose** and scripts |
+| Opaque behavior | **Tool Catalog** + Lisp you can read |
+| Chat-first | **Notes-first**; chat serves the note |
+| Agent marketplace story | **Your tree**, your rules, optional depth |
+
+## Personalize (optional)
+
+If you like, tell us what to call you on the [name](noetic://document/name) page under **interview**—used for greetings on the dashboard.
+
+---
+
+**Next:** pick any setup link above, start with [Scripting overview](noetic://document/Scripting%20overview), or [open your Library](noetic://screen/dashboard) and start a note.

@@ -1,0 +1,38 @@
+---
+title: camera setup
+custom-meta:
+  onboarding-step: 2
+---
+# Camera and photos in notes
+
+Use **Camera** for a new shot, or **Attach photo** to link pictures from your gallery to the note for **Talk to me** and discourse. Captures typically land under **Pictures/NoeticJournal/** on the device.
+
+## Permissions
+
+The first time you capture or pick a photo, Android asks for **Camera** and/or **Photos** access. Allow access if you want images in notes; change this later in system Settings.
+
+## In the note editor
+
+1. Open or create a note.
+2. Open the **Tools** sheet (tabs: Tools, Workspace, **About**).
+3. Under **Media**, choose **Camera** or **Attach photo**.
+
+![Tools sheet: Attach photo and Camera](<asset://images/onboarding_note_tools_attach_photo_cyber.png>)
+
+### Attach photo (gallery)
+
+**Link images to document** lists recent pictures from folders you choose (for example **Pictures / NoeticJournal**). Use the **Folder** menu and optional **date added** filter to find older shots. Tap **Add**, label the image, then **Update images**.
+
+![Link images picker](<asset://images/onboarding_link_images_picker_cyber.png>)
+
+Preview confirms the file before you attach:
+
+![Image preview before attach](<asset://images/onboarding_link_images_preview_cyber.png>)
+
+Enable **Include images in discourse chat** when you want the model to see linked photos in **Talk to me**.
+
+## Syncing images
+
+To pull a PNG or JPEG from Dropbox into your gallery, link the remote path on a note and use **Synchronize with Dropbox** from the Tools sheet. See [cloud provider setup](noetic://document/cloud%20provider%20setup).
+
+[Back to welcome](noetic://document/initial%20experience)

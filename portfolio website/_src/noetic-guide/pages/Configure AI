@@ -1,0 +1,29 @@
+---
+title: Configure AI
+custom-meta:
+  onboarding-step: 1
+---
+# Cloud AI (remote models)
+
+Remote generative AI powers **Talk to me** on notes, semantic **Search**, natural-language **Help**, and many automations. You bring your own API keys (**BYOK**) or point the app at a **private server** endpoint your build supports.
+
+## What to configure
+
+1. Open **Profile → Model configuration** from the menu (or [Model configuration](noetic://screen/model%20config)).
+2. Under **Ready** or **Available**, enable a **remote** provider (OpenAI-compatible, Gemini, Anthropic, and others depending on your build).
+3. Assign **HIGH** and **LOW** roles when prompted—HIGH for quality chat, LOW for quick background tasks.
+4. For notes with photos, pick a model that supports **vision** when you want the assistant to see attached images.
+
+![Remote model and tool settings](<asset://images/onboarding_model_config_remote_cyber.png>)
+
+## Privacy and terms
+
+Traffic goes to the provider you choose under **their** terms and privacy policy. API keys stay on your device unless you export your journal. For sensitive material, prefer [Configure local AI](noetic://document/Configure%20local%20AI) or skip remote models until you need them (see the [welcome tour](noetic://document/initial%20experience) optional setup links).
+
+## Try it
+
+- Open a note → **Talk to me** (chat) to discuss that document’s scope.
+- Menu → **Help** → ask *how do I chat with this document?*
+- Attach images on a note and enable **Include images in discourse chat** when the model supports vision.
+
+[Back to welcome](noetic://document/initial%20experience) · [Local AI](noetic://document/Configure%20local%20AI) · [Library](noetic://screen/dashboard)
