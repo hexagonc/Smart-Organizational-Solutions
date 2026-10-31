@@ -398,6 +398,23 @@ section {
   line-height: 1.5;
 }
 
+.andrew-availability {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #36764a;
+  font-weight: 600;
+}
+
+.andrew-availability span {
+  width: 0.55rem;
+  height: 0.55rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #2f9e57;
+  box-shadow: 0 0 0 0.22rem rgba(47, 158, 87, 0.14);
+}
+
 .team-focus-list {
   padding-left: 1.25rem;
   margin-bottom: 0;

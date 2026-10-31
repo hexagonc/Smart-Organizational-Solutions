@@ -29,6 +29,7 @@ DIST = ROOT / "dist"
 PORTFOLIO_SRC = ROOT / "portfolio website"
 SITE_URL = "https://www.smartyorg.com"
 CONTACT_EMAIL = "contact@smartyorg.com"
+DEFAULT_ANDREW_EMAIL = "abaughns12@gmail.com"
 YEAR = date.today().year
 
 INTEREST_OPTIONS = [
@@ -287,7 +288,7 @@ def build_index(articles: list[dict], imgs: dict) -> None:
     (DIST / "index.html").write_text(page, encoding="utf-8")
 
 
-def build_portfolio() -> None:
+def build_portfolio(andrew_email: str) -> None:
     """Publish Andrew's standalone portfolio as the /andrew section of SOS."""
     out = DIST / "andrew"
     out.mkdir(parents=True, exist_ok=True)
@@ -301,6 +302,7 @@ def build_portfolio() -> None:
         page = page_path.read_text(encoding="utf-8")
         page = page.replace("https://evolved-automata.com/", f"{SITE_URL}/andrew/")
         if page_path == out / "index.html":
+            page = page.replace("{{ANDREW_EMAIL}}", html.escape(andrew_email, quote=True))
             page = page.replace(
                 '<li class="hide-sm"><a class="link" href="#about">About</a></li>',
                 '<li class="hide-sm"><a class="link" href="#about">About</a></li>\n'
@@ -337,13 +339,18 @@ def main() -> None:
     css = (ROOT / "style.css").read_text(encoding="utf-8").replace("images/hero_background.png", "images/hero_background.webp")
     (DIST / "style.css").write_text(css, encoding="utf-8")
     shutil.copy(ROOT / "src" / "site.js", DIST / "site.js")
-    if (ROOT / "config.json").exists():  # deployed config (not committed)
-        shutil.copy(ROOT / "config.json", DIST / "config.json")
+    config_path = ROOT / "config.json"
+    config = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
+    if config_path.exists():  # deployed config (not committed)
+        shutil.copy(config_path, DIST / "config.json")
+    andrew_email = config.get("andrew", {}).get("email", DEFAULT_ANDREW_EMAIL).strip()
+    if not andrew_email:
+        andrew_email = DEFAULT_ANDREW_EMAIL
     articles = json.loads((ROOT / "articles.json").read_text(encoding="utf-8"))
     for a in articles:
         build_article(a, imgs)
     build_index(articles, imgs)
-    build_portfolio()
+    build_portfolio(andrew_email)
     build_sitemap(articles)
     total = sum(p.stat().st_size for p in DIST.rglob("*") if p.is_file())
     print(f"Built {len(articles)} article(s) into {DIST} ({total/1024:.0f} KB total)")

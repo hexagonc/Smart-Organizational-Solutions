@@ -118,15 +118,19 @@ Submissions POST to **API Gateway + Lambda + SES**. Configure the API URL and di
     "email": "contact@smartyorg.com",
     "subjectPrefix": "SOS Website Contact",
     "formEndpoint": "https://YOUR_API.execute-api.us-east-1.amazonaws.com/development/contact"
+  },
+  "andrew": {
+    "email": "andrew@example.com"
   }
 }
 ```
 
 | Field | Purpose |
 |-------|---------|
-| `email` | Shown as mailto on the page (should match Lambda `TO_EMAIL` / SES recipient) |
-| `formEndpoint` | Full API URL including stage and `/contact` path |
-| `subjectPrefix` | Passed to Lambda for the email subject |
+| `contact.email` | Shown as the main contact address (should match Lambda `TO_EMAIL` / SES recipient) |
+| `contact.formEndpoint` | Full API URL including stage and `/contact` path |
+| `contact.subjectPrefix` | Passed to Lambda for the email subject |
+| `andrew.email` | Inserted into the portfolio's **Email me** links at build time |
 
 The form sends `interest` (display label), `interestSlug`, and `message` to Lambda. The notification email includes **Topic of interest** in the subject and body. Redeploy the Lambda after pulling handler changes from `aws/contact-form/`.
 
