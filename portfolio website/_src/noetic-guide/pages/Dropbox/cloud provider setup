@@ -1,0 +1,39 @@
+---
+title: Dropbox/cloud provider setup
+custom-meta:
+  onboarding-step: 6
+  draft: true
+---
+# Cloud backup and sync (Dropbox)
+
+Dropbox is the cloud provider today (more providers later). Use it to back up your whole journal, restore it, sync individual notes, and pick remote files such as music or photos.
+
+## Back up or restore everything
+
+Open **Profile → Cloud & paths**. Under **Cloud provider**:
+
+- **Backup to Dropbox folder…** copies all journal notes, large-string sidecar files (`*_strings.txt`), and `NoeticJournal.lisp` to a Dropbox folder. Individual-file backup skips files already on Dropbox and can be resumed.
+- **Backup as ZIP to Dropbox folder…** is better for large journals.
+- **Restore from Dropbox folder…** reloads your journal from disk after the restore finishes.
+
+![Cloud provider and sync folder settings](<asset://images/onboarding_cloud_dropbox_paths_cyber.png>)
+
+Backups include app state that may reference this device, so restoring on another device may not behave identically.
+
+## Per-note sync folder
+
+**Cloud sync folder** sets the default file or folder for per-note Dropbox sync. Folder defaults prefill `{folder}/{note title}`; file defaults use the exact path. To sync one note, open its **Tools** sheet and use **Synchronize with Dropbox**.
+
+## Pick remote files
+
+Actions that need a Dropbox file open **Select File or Folder**. Browse from the root, use **to parent folder** to go back, or **Create new folder…**, then choose a file and tap **OK**.
+
+![Dropbox root folder](<asset://images/help_remote_file_picker_dropbox_root_cyber.png>)
+
+![Choosing an album folder](<asset://images/help_remote_file_picker_car_music_cyber.png>)
+
+![Selecting a track](<asset://images/help_remote_file_picker_submergence_selected_cyber.png>)
+
+This is how **Help** downloads and plays music (see [setup music and media](noetic://document/setup%20music%20and%20media)) and how photos reach your gallery (see [camera setup](noetic://document/camera%20setup)).
+
+[Back to welcome](noetic://document/initial%20experience)

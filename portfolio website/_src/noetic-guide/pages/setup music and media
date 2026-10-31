@@ -1,0 +1,30 @@
+---
+title: setup music and media
+custom-meta:
+  onboarding-step: 5
+---
+# Music and media
+
+Play audio from your device or from **Dropbox**, log **how music makes you feel**, and let Help pick tracks by mood.
+
+## Play music
+
+- **Help:** *“play Pink Floyd”*, *“play something that will make me feel upbeat”*, or *“download and play Submergence”* (remote file on Dropbox).
+- **Remote download + play:** Help topic **download music from remote filesystem and play it directly** walks you through the Dropbox picker, download, and in-app player.
+- **Collection:** organize artists under **me → my things → music** (see **add a song to my music** in Help).
+
+![Help matches a download-and-play question](<asset://images/help_music_search_partial_matches_cyber.png>)
+
+![Playback from the in-app music service](<asset://images/help_music_playback_notification.png>)
+
+Android may ask to read **Music and audio** before playback. Link [cloud provider setup](noetic://document/cloud%20provider%20setup) first for remote files.
+
+## Emotion log
+
+Under **me → my things → emotions**, keep feeling names you use (*upbeat*, *focused*, *calm*). Tell Help: *“I felt happy listening to …”* so mood-based playback improves over time.
+
+## Video demos
+
+Bundled tutorial clips (when present) play via automation in **Show me** scripts—not required for daily use.
+
+[Back to welcome](noetic://document/initial%20experience)

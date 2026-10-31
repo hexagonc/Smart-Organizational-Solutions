@@ -2,96 +2,73 @@
 
 Professional website for SOS — a two-person high-tech consultancy (mobile, AI, and organizational effectiveness).
 
-## Run locally
+## How the site is built
 
-This site uses React (via CDN) and loads Markdown articles over HTTP. **Do not open `index.html` directly in the browser** (`file://`); use a local server instead:
+The site is plain, pre-rendered HTML. A small Python build step turns the page template and the Markdown articles into static files in `dist/`. Visitors (and search engines and LinkedIn/X link previews) get the full page content immediately; there is no React or Babel compile step in the browser.
+
+The build also converts the main-site images to resized WebP, publishes Andrew's portfolio under `/andrew/`, writes `sitemap.xml`, `robots.txt`, Open Graph tags and schema.org data, and copies `config.json` if it exists.
+
+## Running the website locally
+
+Run these commands from the repository root. Python 3 is required.
 
 ```bash
-cd /path/to/sos
-python3 -m http.server 8080
+# Install build dependencies (only needed once)
+python3 -m pip install markdown Pillow
+
+# Generate the static website in dist/
+python3 scripts/build_site.py
+
+# Serve dist/ at http://localhost:8080
+python3 -m http.server 8080 --directory dist
 ```
 
-Then visit **http://localhost:8080**
+Open the following URLs in a browser:
+
+- Main website: <http://localhost:8080/>
+- Andrew's portfolio: <http://localhost:8080/andrew/>
+
+Keep the terminal running while viewing the site. Press **Ctrl+C** to stop the web server. Re-run the build command after changing source files.
 
 ## Project layout
 
 | Path | Purpose |
 |------|---------|
-| `index.html` | Entry page, loads Bootstrap, React, Marked, `script.js` |
-| `script.js` | Site UI and article routing (`#article/<id>`) |
-| `style.css` | Styles including article reader and backgrounds |
-| `config.json` | Site settings (contact email, form options) |
-| `images/` | Site assets (logo, hero, article tile) |
+| `src/index.template.html` | Home page sections (hero, services, articles, team, contact) |
+| `src/site.js` | Navbar scroll effect and contact form (no framework) |
+| `style.css` | Styles, including the article reader and backgrounds |
+| `articles.json` | Article list (title, author, date, excerpt, Markdown path) |
 | `articles/` | Markdown sources and per-article images |
-| `scripts/` | Utilities to generate article background tiles |
+| `portfolio website/` | Andrew's portfolio source; published under `/andrew/` by the main build |
+| `images/` | Original, full-size site images (the build makes web copies) |
+| `scripts/build_site.py` | Static site build |
+| `scripts/build_article_*.py` | Utilities to generate article backgrounds |
+| `config.json` | Contact email and form endpoint (copied into `dist/`) |
+| `dist/` | Build output, not committed; this is what gets uploaded |
 
 ## Adding an article
 
-### 1. Create content on disk
+1. Create a folder without spaces, for example `articles/andrew/my_article_slug/`, containing `draft.md` and its images.
+2. Write Markdown. The first `#` heading is removed from the body (the title is shown in the page header). Obsidian-style embeds such as `![[figure-one.png]]` are converted to optimized images automatically.
+3. Add an entry to `articles.json`:
 
-Use a folder without spaces in names (recommended):
-
-```
-articles/
-  andrew/
-    my_article_slug/
-      draft.md
-      figure-one.png
-      figure-two.png
-```
-
-Put images in the same folder as the Markdown file.
-
-### 2. Write Markdown
-
-- The **first `#` heading** is used as the listing title but is **removed** on the article page (the title is shown in the page header instead).
-- For images, Obsidian-style embeds work and are converted automatically:
-
-```markdown
-# My Article Title
-
-## Introduction
-
-Your content here.
-
-![[figure-one.png]]
-```
-
-### 3. Register the article in `script.js`
-
-Add an entry to the `ARTICLES` array at the top of `script.js`:
-
-```javascript
+```json
 {
-  id: 'my-article-slug',           // URL: #article/my-article-slug
-  title: 'My Article Title',       // Shown in listing and article header
-  author: 'Andrew Baughns',
-  publishedAt: '2025-05-21',       // ISO date (YYYY-MM-DD), shown on listing and article page
-  excerpt: 'Short summary for the Articles section.',
-  markdownPath: 'articles/andrew/my_article_slug/draft.md',
-  imageBase: 'articles/andrew/my_article_slug/',
-  backgroundImage: 'images/article_tile.png',  // optional — see below
-},
+  "id": "my-article-slug",
+  "title": "My Article Title",
+  "author": "Andrew Baughns",
+  "publishedAt": "2025-05-21",
+  "excerpt": "Short summary for the Articles section.",
+  "markdownPath": "articles/andrew/my_article_slug/draft.md",
+  "backgroundImage": "images/article_tile.png"
+}
 ```
 
-| Field | Required | Purpose |
-|-------|----------|---------|
-| `id` | yes | URL slug (`#article/<id>`) |
-| `title` | yes | Article title |
-| `author` | yes | Author name |
-| `publishedAt` | no | Publication date (`YYYY-MM-DD`) |
-| `excerpt` | yes | Summary on the Articles list |
-| `markdownPath` | yes | Path to Markdown file |
-| `imageBase` | yes | Folder for article images |
-| `backgroundImage` | no | Optional reader page background |
-
-### 4. Preview
-
-Restart or refresh the server, open **http://localhost:8080/#articles**, and click **Read article**, or go directly to **http://localhost:8080/#article/my-article-slug**.
+4. Run `python3 scripts/build_site.py`. The article is published at `/articles/my-article-slug/index.html` (links use the explicit `index.html` so they work on CloudFront without extra URL rewriting). Old links of the form `/#article/<id>` redirect there automatically.
 
 ## Article backgrounds
 
-Each article can optionally set `backgroundImage` in `ARTICLES`. When set, the reader page uses class `article-page-with-background` and CSS variable `--article-bg`.
+Each article can optionally set `backgroundImage` in `articles.json`. When set, the reader page uses class `article-page-with-background` and CSS variable `--article-bg`.
 
 ### Default tileable background
 
@@ -141,15 +118,19 @@ Submissions POST to **API Gateway + Lambda + SES**. Configure the API URL and di
     "email": "contact@smartyorg.com",
     "subjectPrefix": "SOS Website Contact",
     "formEndpoint": "https://YOUR_API.execute-api.us-east-1.amazonaws.com/development/contact"
+  },
+  "andrew": {
+    "email": "andrew@example.com"
   }
 }
 ```
 
 | Field | Purpose |
 |-------|---------|
-| `email` | Shown as mailto on the page (should match Lambda `TO_EMAIL` / SES recipient) |
-| `formEndpoint` | Full API URL including stage and `/contact` path |
-| `subjectPrefix` | Passed to Lambda for the email subject |
+| `contact.email` | Shown as the main contact address (should match Lambda `TO_EMAIL` / SES recipient) |
+| `contact.formEndpoint` | Full API URL including stage and `/contact` path |
+| `contact.subjectPrefix` | Passed to Lambda for the email subject |
+| `andrew.email` | Inserted into the portfolio's **Email me** links at build time |
 
 The form sends `interest` (display label), `interestSlug`, and `message` to Lambda. The notification email includes **Topic of interest** in the subject and body. Redeploy the Lambda after pulling handler changes from `aws/contact-form/`.
 
@@ -157,4 +138,12 @@ Deploy and test: see [aws/README.md](aws/README.md).
 
 ## Deploying
 
-Commit and push as usual. Host as static files (GitHub Pages, S3, nginx, etc.) — any static host that serves `.md` and images with correct MIME types works. No build step is required unless you add one later.
+Build, then upload `dist/` to the S3 bucket behind CloudFront and invalidate the cache:
+
+```bash
+python3 scripts/build_site.py
+aws s3 sync dist/ s3://<bucket-name>/ --delete --exclude config.json
+aws cloudfront create-invalidation --distribution-id <id> --paths "/*"
+```
+
+`--exclude config.json` keeps the live config in place if it is not in your working copy. Any static host (S3, GitHub Pages, Netlify, nginx) works; just upload `dist/`.

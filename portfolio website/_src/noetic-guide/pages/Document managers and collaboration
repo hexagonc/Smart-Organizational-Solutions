@@ -1,0 +1,77 @@
+---
+title: Document managers and collaboration
+custom-meta:
+  onboarding-step: 23
+---
+# Document managers and collaboration
+
+Every note can host a **document manager**: an LLM helper **scoped to that note**—its **purpose**, **body**, **children**, and (in richer modes) **chat history**. Managers are not a separate “agent product”; they implement **rules you write**. Multi-note routing is **possible** in advanced modes when purpose allows it—not the default story.
+
+## Discourse modes (Talk to me)
+
+| Mode | When | What the app does |
+| --- | --- | --- |
+| **Simple chat** (default) | Discourse with context & Hi-IQ off | Ask / tell / command via lightweight XML—no **`action-lisp`** loop |
+| **Context chat** | Discourse “context” on | This note only: effective **purpose**, chat thread, **`action-lisp`** (TTS, media, macros, …). Profile → **Context chat** step budget (default **4** Lisp turns per message) |
+| **Hi-IQ chat** | Discourse Hi-IQ on | Related docs, tree/workspace context, optional **peer** `<recipient-doc-id>`. Prefers **HIGH** model. Profile → **Hi-IQ** step budget (default **8**) and **collaboration action points** |
+
+**Lisp one-shots** (no persistent discourse transcript on the script):
+
+| API | Role |
+| --- | --- |
+| **`simple-doc-ask` / `tell` / `command`** | Single manager call; LOW by default |
+| **`advanced-doc-chat`** | Full manager thread for that invocation (macros, chores summary, …) |
+
+All discourse paths can attach **contextual images** for **vision** models.
+
+## High model vs low model
+
+Configure under **Profile → Model configuration**:
+
+- **HIGH** — richer manager protocol, peer delegation when Hi-IQ and purpose allow, tool use.  
+- **LOW** — faster background tasks (append journal line, simple classification) when HIGH is unavailable or overkill.  
+
+Macros often set **`allow-low-model`** / **`allow-high-model`** per call (see **append new diary entry**).
+
+## Governance users care about
+
+- **Purpose** is binding: state what tools and delegation are allowed (games, checklists, planners). Use **`set-purpose`** / **`get-purpose`** from Lisp when automating.  
+- **Body changes** may surface as **`new-version`** proposals—you **approve** before the note is rewritten.  
+- **Chat history:** persists on the note (**raw** `chat-history` on disk). **`clear-document-chat-history`** (or UI clear) advances **`chat-start-ts`** so older turns drop out of what the **model** sees—not a full erase.  
+- **Hi-IQ collaboration action points** limit manager-to-manager hops per user message; budget can renew on relay.  
+- **About → Storage:** optional on-disk size check (note + strings sidecar). Debug menu can cap raw chat-history **MB** per note.
+
+### Example purposes people enjoy
+
+- **Games** — tic-tac-toe or hangman docs whose purpose constrains moves and board updates in the body.  
+- **Checklists** — managers tick/untick items, reorder sections, or split lists when asked.  
+- **Journals & registered to-do lists** — convention-based UIs append dated entries or tasks; filters sort by topic or time (see **advanced** docs).  
+- **Delegation (advanced)** — a planner doc asks a specialist child via Hi-IQ **peer** chat by **document id**, then summarizes—only when purpose describes that pattern.
+
+## Document manager vs UI
+
+Many operations exist in **both** places on purpose:
+
+| Task | UI | Script / manager |
+| --- | --- | --- |
+| Append journal line | Tasks / forms / discourse | `(append-entry-to-journal …)`, **append new diary entry** macro |
+| Toggle checklist item | Editor + discourse | Manager body edit or Lisp on doc env |
+| Ask about attached photo | Talk to me + images | `(simple-doc-ask … t image-map)` |
+| Filter / sort journal | Doc properties + filter child | `filter-exp`, semantic search conventions |
+
+Use the UI to learn; use managers and Lisp when you want **repeatable**, **scheduled**, or **multi-doc** workflows.
+
+## Filters, journals, and conventions
+
+A doc becomes a **journal** when configured with filter properties (see **what is a journal doc** and **How do you add a filter to a journal** in the advanced collection). **Registered journals** and **registered to-do lists** tie into dedicated UI and macros (scratch keys `default-journal-doc-id`, `default-to-do-list`, registry Lisp functions).
+
+## Practical tips
+
+1. Write a clear **purpose** before expecting reliable manager behavior.  
+2. Start with **simple chat**; enable **context** or **Hi-IQ** when the note’s job needs it.  
+3. Use **document id** when delegating—titles are not unique in workspaces.  
+4. Call **`clear-document-chat-history`** when a topic is finished; raw history remains until you trim or delete the note.  
+5. For image questions, attach images to the note and enable **Include images in discourse**, or pass an image map in Lisp.  
+6. Read **Doc agent presets and catalogs** (advanced) to clone manager roles across notes.
+
+**Back:** [Scripting overview](noetic://document/Scripting%20overview) · [Welcome](noetic://document/initial%20experience) · **Advanced:** [advanced](noetic://document/advanced) collection

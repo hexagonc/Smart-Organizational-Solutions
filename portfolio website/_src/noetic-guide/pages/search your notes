@@ -1,0 +1,45 @@
+---
+title: search your notes
+custom-meta:
+  onboarding-step: 2
+---
+# Search your notes
+
+Menu → **Search** runs **keyword** jobs across large libraries. Results stream in as **partial matches** so you can preview hits before the job finishes—useful when you have thousands of notes in **Noetic_Journal**, **me**, and **knowledgebase**.
+
+## Start a search
+
+1. Open [Search](noetic://screen/search) from the menu.
+2. Type your query (use **"quotes"** for an exact phrase).
+3. Choose **keyword** vs semantic modes and **document** vs **collection** scope as needed.
+4. Under **Collections to search**, check the trees you want (or **Select all**).
+5. Raise **Max partial results** if you expect many hits (default 20).
+6. Tap **Start search**.
+
+![Query and scope](<asset://images/onboarding_search_query_filters.png>)
+
+![Collection and date filters](<asset://images/onboarding_search_collections_filters.png>)
+
+## While it runs
+
+The selected query shows progress; **Partial results** fill in as documents match. Use **Pause**, **Cancel**, or **Accept all** when you are satisfied.
+
+![Search in progress](<asset://images/onboarding_search_job_in_progress.png>)
+
+![Partial results streaming in](<asset://images/onboarding_search_partial_results.png>)
+
+## Open a hit
+
+Each card shows title, path, and **hits:** keywords that matched. **Preview** opens a quick read-only view; **Open** jumps to the note; **Accept** keeps the hit in your result set.
+
+![Many partial matches (large library)](<asset://images/onboarding_search_partial_results_complete.png>)
+
+![Preview the note you wanted](<asset://images/onboarding_search_preview_hit.png>)
+
+## Tips
+
+- Limit by **date** when you remember roughly when you edited the note.
+- Search **title** and **body** together for most everyday lookups.
+- For “how do I …?” questions, **Help** is often faster than Search.
+
+[Back to welcome](noetic://document/initial%20experience)

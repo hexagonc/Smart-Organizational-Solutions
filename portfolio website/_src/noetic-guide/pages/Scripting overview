@@ -1,0 +1,50 @@
+---
+title: Scripting overview
+custom-meta:
+  onboarding-step: 20
+  summary: Programmable notes — Help automation, macros, scheduled commands, and purpose-driven managers.
+---
+# Scripting overview
+
+Noetic Journal is a **note app and a programmable workspace**. Much of what feels like “product behavior” is implemented as **Lisp scripts** you can inspect, run, copy, and extend. That is intentional: the same UI actions you tap can often be reproduced—or combined—in automation. Scripts are **not hidden in the app binary** for most workflows: macros and configuration live in **shared collection** notes you sync (Dropbox) and edit like any other page.
+
+## Where scripting shows up
+
+| Surface | What runs |
+| --- | --- |
+| **Help → Show me** | Onboarding and how-to flows driven by macros and UI automation |
+| **Menu → Tools / Macros** | Named **macro scripts** you run on demand |
+| **Scheduled commands** | Lisp jobs on a timer or trigger (background-capable) |
+| **Scratch pad** | Global snippets—especially `<< … >>` blocks you **Run** without the UI environment |
+| **Note body / purpose** | Embedded Lisp in notes; managers run **`action-lisp`** when purpose and discourse mode allow |
+| **Default macros catalog** | Shipped examples: flashcards, journals, to-do lists, markdown preview, sync helpers |
+
+Duplication between **menus** and **scripts** is a feature: learn in the UI, then automate in Lisp when you want repeatability, batching, or AI-assisted workflows.
+
+## Three mental buckets
+
+1. **Macro catalog** — Toolbar or speech (`append new diary entry`, location reminders, …). Registered at startup from **default macros** under **current configuration**.
+2. **Note bodies and purpose** — `<< … >>` fields evaluate on load or when a manager reads **effective purpose**.
+3. **REPL, Scratch, scheduled commands** — Power-user and background paths on journal or document environments.
+
+Functions are listed in **Tool Catalog** (user, document manager, automation, …). Extend behavior by adding Lisp and updating **purpose**, not by patching the app.
+
+## Safety and expectations
+
+- Scripts run with **permissions you grant** (location, notifications, storage, network for remote AI).
+- **Purpose** should say what a note may do; managers use catalog functions your purpose names (plus built-in helpers for the active discourse mode).
+- Failures appear in the event log and in manager **`action-response`** when applicable.
+
+## Read next
+
+1. [Noetic Lisp and environments](noetic://document/Noetic%20Lisp%20and%20environments) — dialect basics, Tool Catalog categories, vs Common Lisp  
+2. [Macro scripts and the default catalog](noetic://document/Macro%20scripts%20and%20the%20default%20catalog) — **Tools / Macros**, built-ins like flashcard testing  
+3. [Document managers and collaboration](noetic://document/Document%20managers%20and%20collaboration) — per-note AI bound to **purpose**, discourse modes, approvals  
+
+Advanced configuration (filters, presets, semantic search): see the **advanced** documentation collection and [what is a journal doc](noetic://document/what%20is%20a%20journal%20doc).
+
+## Try it
+
+- Menu → **Tools / Macros** → run **show-current-doc-as-markdown** on an open note.  
+- **Help** → ask *“how can I create flashcards from my notes?”* → read the article → **Show me** when offered.  
+- Menu → **Tool Catalog** → browse by category; star favorites for quick access.
