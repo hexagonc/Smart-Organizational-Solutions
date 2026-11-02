@@ -301,6 +301,10 @@ def build_portfolio(andrew_email: str) -> None:
     for page_path in out.rglob("*.html"):
         page = page_path.read_text(encoding="utf-8")
         page = page.replace("https://evolved-automata.com/", f"{SITE_URL}/andrew/")
+        # Displayed (non-link) URLs, e.g. the privacy-policy table on apps/index.html.
+        page = page.replace("evolved-automata.com/", "www.smartyorg.com/andrew/")
+        # Drop editor scripts that preview tools inject into saved copies of pages.
+        page = re.sub(r"\s*<script data-pplx-inline-edit>.*?</script>", "", page, flags=re.S)
         if page_path == out / "index.html":
             page = page.replace("{{ANDREW_EMAIL}}", html.escape(andrew_email, quote=True))
             page = page.replace(
